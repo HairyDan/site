@@ -38,7 +38,8 @@ c3text.transform("T0,-37");
 c3text.node.setAttribute('class', 'raphtext');
 var circle4 = paper.circle("80%", "40%", 30);
 circle4.attr(defaultcirc);
-c4text = paper.text("80%", "40%", "Contact").attr({fill: '#888888', "font-size":20, "font":""});
+circle4.attr({href: "https://www.linkedin.com/in/daniel-schormans-57064015b/"});
+c4text = paper.text("80%", "40%", "Contact").attr({fill: '#888888', "font-size":20, "font":"", href: "https://www.linkedin.com/in/daniel-schormans-57064015b/"});
 c4text.transform("T0,-37");
 c4text.node.setAttribute('class', 'raphtext');
 var circles = [];
@@ -62,17 +63,38 @@ circle1.hover(function (evt) {
 }, function (outevt) {
     transitiontodefault(circle1, c1text);
 });
+c1text.hover(function (evt) {
+    transitionto2(circle1, c1text);
+}, function (outevt) {
+    transitiontodefault(circle1, c1text);
+});
 circle2.hover(function (evt) {
     transitionto2(circle2, c2text);
 }, function (outevt) {
     transitiontodefault(circle2, c2text);
 });
+c2text.hover(function (evt) {
+    transitionto2(circle2, c2text);
+}, function (outevt) {
+    transitiontodefault(circle2, c2text);
+});
+
 circle3.hover(function (evt) {
     transitionto2(circle3, c3text);
 }, function (outevt) {
     transitiontodefault(circle3, c3text);
 });
+c3text.hover(function (evt) {
+    transitionto2(circle3, c3text);
+}, function (outevt) {
+    transitiontodefault(circle3, c3text);
+});
 circle4.hover(function (evt) {
+    transitionto2(circle4, c4text);
+}, function (outevt) {
+    transitiontodefault(circle4, c4text);
+});
+c4text.hover(function (evt) {
     transitionto2(circle4, c4text);
 }, function (outevt) {
     transitiontodefault(circle4, c4text);
