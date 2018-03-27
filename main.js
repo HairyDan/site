@@ -13,7 +13,7 @@ for (i = 1; i < 5; i++) {
 }*/
 var bod = document.getElementById("raphdiv");
 var paper = Raphael(bod, "100%", "80%");
-var circle1 = paper.circle("20%", "50%", 30);
+var circle1 = paper.circle("20%", "40%", 30);
 var defaultcirc = [
     {
         fill: "#aaa",
@@ -23,43 +23,57 @@ var defaultcirc = [
     }
 ];
 circle1.attr(defaultcirc);
-var circle2 = paper.circle("40%", "50%", 30);
+c1text = paper.text("20%", "40%", "CV").attr({fill: '#888888', "font-size":20, "font":""});
+c1text.transform("T0,-37");
+c1text.node.setAttribute('class', 'raphtext');
+var circle2 = paper.circle("40%", "40%", 30);
 circle2.attr(defaultcirc);
-var circle3 = paper.circle("60%", "50%", 30);
+c2text = paper.text("40%", "40%", "Bio").attr({fill: '#888888', "font-size":20, "font":""});
+c2text.transform("T0,-37");
+c2text.node.setAttribute('class', 'raphtext');
+var circle3 = paper.circle("60%", "40%", 30);
 circle3.attr(defaultcirc);
-var circle4 = paper.circle("80%", "50%", 30);
+c3text = paper.text("60%", "40%", "Portfolio").attr({fill: '#888888', "font-size":20, "font":""});
+c3text.transform("T0,-37");
+c3text.node.setAttribute('class', 'raphtext');
+var circle4 = paper.circle("80%", "40%", 30);
 circle4.attr(defaultcirc);
+c4text = paper.text("80%", "40%", "Contact").attr({fill: '#888888', "font-size":20, "font":""});
+c4text.transform("T0,-37");
+c4text.node.setAttribute('class', 'raphtext');
 var circles = [];
 circles.push(circle1);
 circles.push(circle2);
 circles.push(circle3);
 circles.push(circle4);
 
-function transitionto2(circ) {
+function transitionto2(circ, text) {
     circ.animate({ fill: "#E55B13", stroke: "#F6A21E", "stroke-width": 5 }, 200);
+    text.animate({fill: "#E55B13"}, 200);
 }
 
-function transitiontodefault(circ) {
+function transitiontodefault(circ, text) {
     circ.animate({ fill: "#aaa", stroke: "#eee", "stroke-width": 2 }, 200);
+    text.animate({fill: "#888"}, 200);
 }
 
 circle1.hover(function (evt) {
-    transitionto2(circle1);
+    transitionto2(circle1, c1text);
 }, function (outevt) {
-    transitiontodefault(circle1);
+    transitiontodefault(circle1, c1text);
 });
 circle2.hover(function (evt) {
-    transitionto2(circle2);
+    transitionto2(circle2, c2text);
 }, function (outevt) {
-    transitiontodefault(circle2);
+    transitiontodefault(circle2, c2text);
 });
 circle3.hover(function (evt) {
-    transitionto2(circle3);
+    transitionto2(circle3, c3text);
 }, function (outevt) {
-    transitiontodefault(circle3);
+    transitiontodefault(circle3, c3text);
 });
 circle4.hover(function (evt) {
-    transitionto2(circle4);
+    transitionto2(circle4, c4text);
 }, function (outevt) {
-    transitiontodefault(circle4);
+    transitiontodefault(circle4, c4text);
 });

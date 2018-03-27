@@ -4,7 +4,7 @@ h1{
     font-size:75px;
     font-weight:200;
     margin:0px;
-    color: aliceblue
+    color: grey
 }
 h2{
     text-align: center;
@@ -12,13 +12,17 @@ h2{
     font-size:40px;
     font-weight:200;
     margin:0px;
-    color: aliceblue
+    color: grey
 }
 
 body{
-    background-color: gray
+    background-color: #eeeeee
 }
 
 #raphdiv{
     width: 100%
+}
+
+.raphtext{
+    font-family:Raleway;
 }
