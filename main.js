@@ -23,17 +23,19 @@ var defaultcirc = [
     }
 ];
 circle1.attr(defaultcirc);
-c1text = paper.text("20%", "40%", "CV").attr({fill: '#888888', "font-size":20, "font":""});
+circle1.attr({href: "dschormansWebsiteCV.pdf"});
+c1text = paper.text("20%", "40%", "CV").attr({fill: '#888888', "font-size":20, "font":"", href: "dschormansWebsiteCV.pdf"});
 c1text.transform("T0,-37");
 c1text.node.setAttribute('class', 'raphtext');
 var circle2 = paper.circle("40%", "40%", 30);
 circle2.attr(defaultcirc);
-c2text = paper.text("40%", "40%", "Bio").attr({fill: '#888888', "font-size":20, "font":""});
+c2text = paper.text("40%", "40%", "Bio (Work in Progress)").attr({fill: '#888888', "font-size":16, "font":""});
 c2text.transform("T0,-37");
 c2text.node.setAttribute('class', 'raphtext');
 var circle3 = paper.circle("60%", "40%", 30);
 circle3.attr(defaultcirc);
-c3text = paper.text("60%", "40%", "Portfolio").attr({fill: '#888888', "font-size":20, "font":""});
+circle3.attr({href: "https://github.com/HairyDan"});
+c3text = paper.text("60%", "40%", "Portfolio (GitHub)").attr({fill: '#888888', "font-size":20, "font":"", href: "https://github.com/HairyDan"});
 c3text.transform("T0,-37");
 c3text.node.setAttribute('class', 'raphtext');
 var circle4 = paper.circle("80%", "40%", 30);
