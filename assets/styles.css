@@ -1,0 +1,325 @@
+:root{
+  --win-bg:#e5e5e5; --win-face:#f7f7f7; --win-dark:#000; --win-shadow:#8a8a8a; --win-light:#fff;
+  --win-hilite:#0055cc; --win-hilite2:#2b8cff;
+  --text:#111; --subtitle:#333; --meta:#444; --link:#0036cc; --visited:#5f4daa;
+  --maxw:700rem;
+}
+
+
+/* Explicit overrides when user sets a theme */
+:root[data-theme="light"] {
+  --win-bg: #e5e5e5;
+  --win-face: #f7f7f7;
+  --win-dark: #000;
+  --win-shadow: #8a8a8a;
+  --win-light: #fff;
+  --win-hilite: #0055cc;
+  --win-hilite2: #2b8cff;
+  --subtitle: #333333;
+  --meta: #444444;
+  --text: #111;
+  --link: #0036cc;
+  --visited: #5f4daa;
+}
+
+:root[data-theme="dark"] {
+  --win-bg: #0f0f0f;
+  --win-face: #171717;
+  --win-dark: #000;
+  --win-shadow: #2a2a2a;
+  --win-light: #4a4a4a;
+  --win-hilite: #0d3ea8;
+  --win-hilite2: #1f6bda;
+  --subtitle: #d6d6d6;
+  --meta: #c2c2c2;
+  --text: #e8e8e8;
+  --link: #8ab4ff;
+  --visited: #b391ff;
+}
+
+
+
+/* Base */
+* {
+  box-sizing: border-box
+}
+
+html,
+body {
+  height: 100%
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(0, 0, 0, .015) 50%, transparent 51%) 0 0/16px 16px,
+    linear-gradient(0deg, transparent 49%, rgba(0, 0, 0, .015) 50%, transparent 51%) 0 0/16px 16px,
+    var(--win-bg);
+  font-family: "Tahoma", "Verdana", "Geneva", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background:
+      linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, .02) 50%, transparent 51%) 0 0/16px 16px,
+      linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, .02) 50%, transparent 51%) 0 0/16px 16px,
+      var(--win-bg);
+  }
+}
+
+
+.container{
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-block: 20px;
+  padding-inline: clamp(5px, max(0px, calc(18vw - 60px)), 512px); /* more space on left/right */
+}
+
+
+/* Headings */
+.title {
+  font-weight: 800;
+  font-size: clamp(28px, 5vw, 56px);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--subtitle);
+}
+
+.win95 {
+  background: var(--win-face);
+  border: 2px solid var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  padding: 0;
+  box-shadow:
+    inset -1px -1px 0 0 var(--win-light),
+    inset 1px 1px 0 0 var(--win-shadow);
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  padding: 0 6px 0 8px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--win-hilite), var(--win-hilite2));
+}
+
+.titlebar .caption {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .02em;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .25);
+}
+
+.controls {
+  display: flex;
+  gap: 4px;
+}
+
+.ctrl {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  background: var(--win-face);
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1;
+  user-select: none;
+}
+
+.ctrl:active {
+  border: 2px solid var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+  width: 34px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+
+  background: var(--win-face);
+  border: 2px solid var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  box-shadow: inset -1px -1px 0 var(--win-light), inset 1px 1px 0 var(--win-shadow);
+
+  font-family: "Tahoma", "Verdana", system-ui, sans-serif;
+  color: var(--text);
+}
+
+.theme-toggle:active {
+  border: 2px solid var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+}
+
+/* Show the right icon depending on theme */
+.theme-toggle .icon-sun {
+  display: inline;
+}
+
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+/* If user explicitly set dark */
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: inline;
+}
+
+/* If no explicit choice, follow system */
+:root:not([data-theme]) .theme-toggle .icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-toggle .icon-sun {
+    display: none;
+  }
+
+  :root:not([data-theme]) .theme-toggle .icon-moon {
+    display: inline;
+  }
+}
+
+.theme-toggle:hover {
+  filter: brightness(1.2);
+}
+
+.win-content {
+  padding: 14px;
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(0, 0, 0, .02) 50%, transparent 51%) 0 0/8px 8px,
+    linear-gradient(0deg, transparent 49%, rgba(0, 0, 0, .02) 50%, transparent 51%) 0 0/8px 8px,
+    var(--win-face);
+}
+
+.win-content>canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  height: clamp(240px, 50vh, 1024px);
+  box-sizing: border-box;
+}
+
+/* optional: hide any accidental overflow from inner padding */
+.win-content {
+  overflow: hidden;
+}
+
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  text-decoration: none;
+  border: 2px solid var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  background: var(--win-face);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  margin: 4px 6px 0 0;
+}
+
+.btn:visited {
+  color: var(--text);
+}
+
+.btn:active {
+  border: 2px solid var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+}
+
+.btn.primary {
+  background: linear-gradient(180deg, #eaf3ff, #cfe3ff);
+  /* light mode */
+  border-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn.primary {
+    background: linear-gradient(180deg, #213b5f, #162a46);
+    /* dark mode */
+    color: #e8e8e8;
+  }
+}
+
+.navbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+section {
+  padding: 18px 0;
+}
+
+.section-title {
+  font-size: 18px;
+  letter-spacing: .18em;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+a {
+  color: var(--link);
+}
+
+a:visited {
+  color: var(--visited);
+}
+
+.post-card {
+  margin-bottom: 12px;
+}
+
+.post-card h3 {
+  margin: 6px 0 0;
+  font-weight: 800;
+}
+
+.fn-pop {
+  position: absolute;
+  max-width: 32rem;
+  z-index: 50;
+  background: var(--win-face);
+  border: 2px solid var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  padding: 10px 12px;
+}
+
+.fn-pop.hide {
+  display: none;
+}
+

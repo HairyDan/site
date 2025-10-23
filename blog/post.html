@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title id="title">Post — Dan Schormans</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+
+  <div id="themeToggle"
+  class="theme-toggle"
+  role="button"
+  aria-label="Toggle light/dark theme"
+  aria-pressed="false"
+  title="Toggle theme">
+<span class="icon-sun" aria-hidden="true">☼</span>
+<span class="icon-moon" aria-hidden="true">☾</span>
+</div>
+
+  <header>
+    <div class="container">
+      <h1 class="title" id="post-title">Loading…</h1>
+      <p class="subtitle" id="post-subtitle"></p>
+      <div class="navbar"><a class="btn" href="./"><- all posts</a><a class="btn" href="../">home</a></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="win95">
+      <div class="titlebar"><div class="caption">READING — WordPad</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>
+      <div class="win-content" id="content">Loading…</div>
+    </section>
+  </main>
+
+  <script src="../assets/main.js"></script>
+  <script src="../assets/micro-markdown.js"></script>
+  <script>
+    (async function () {
+      const params = new URLSearchParams(location.search);
+      const slug = params.get('slug');
+      if (!slug) { document.getElementById('content').textContent = 'Missing ?slug'; return; }
+
+      const metaList = await fetch('posts.json').then(r=>r.json()).catch(()=>[]);
+      const meta = metaList.find(p => p.slug === slug) || null;
+      if (meta) {
+        document.getElementById('title').textContent = meta.title + ' — Dan Schormans';
+        document.getElementById('post-title').textContent = meta.title;
+        document.getElementById('post-subtitle').textContent = (new Date(meta.date).toLocaleDateString()) + (meta.excerpt ? (' · ' + meta.excerpt) : '');
+      }
+
+      const md = await fetch('posts/' + slug + '.md').then(r=>r.text());
+      const html = window.microMarkdown(md);
+      document.getElementById('content').innerHTML = html;
+    })();
+  </script>
+</body>
+</html>

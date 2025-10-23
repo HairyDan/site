@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog — Dan Schormans</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+
+  <div id="themeToggle"
+     class="theme-toggle"
+     role="button"
+     aria-label="Toggle light/dark theme"
+     aria-pressed="false"
+     title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">☼</span>
+  <span class="icon-moon" aria-hidden="true">☾</span>
+</div>
+
+  <header>
+    <div class="container">
+      <h1 class="title">blog</h1>
+      <p class="subtitle">100% guaranteed to have been written in less than 20 minutes - or your money back!</p>
+      <div class="navbar"><a class="btn" href="../"><- home</a></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="win95">
+      <div class="titlebar">
+        <div class="caption">POSTS — Explorer</div>
+        <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
+      </div>
+      <div class="win-content" id="post-list"></div>
+    </section>
+  </main>
+
+  <script src="../assets/main.js"></script>
+  <script>
+    async function boot() {
+      const res = await fetch('posts.json');
+      const posts = await res.json();
+      const list = document.getElementById('post-list');
+      posts.sort((a,b)=> new Date(b.date) - new Date(a.date));
+      for (const p of posts) {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'win95 post-card';
+        wrapper.innerHTML = '<div class="titlebar"><div class="caption">POST</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>' +
+                            '<div class="win-content"><h3><a href="post.html?slug=' + p.slug + '">' + p.title + '</a></h3>' +
+                            '<div class="meta">' + new Date(p.date).toDateString() + ' · ' + p.excerpt + '</div></div>';
+        list.appendChild(wrapper);
+      }
+    }
+    boot();
+  </script>
+</body>
+</html>

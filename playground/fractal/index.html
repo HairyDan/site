@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Playground — Fractal</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <div id="themeToggle"
+    class="theme-toggle"
+    role="button"
+    aria-label="Toggle light/dark theme"
+    aria-pressed="false"
+    title="Toggle theme">
+  <span class="icon-sun" aria-hidden="true">☼</span>
+  <span class="icon-moon" aria-hidden="true">☾</span>
+  </div>
+  <header class="container">
+    <h1 class="title">playground</h1>
+    <p class="subtitle">tiny toys & experiments</p>
+    <nav class="navbar" style="margin-bottom:8px">
+        <a class="btn" href="../../"><- home</a>
+        <a class="btn " href="/playground/dweet/">dweet unpacker</a>
+        <a class="btn" href="/playground/life/">game of life</a>
+        <a class="btn primary" href="/playground/fractal/">fractal</a>
+      </nav>
+  </header>
+
+  <main class="container">
+    <section class="win95">
+      <div class="titlebar">
+        <div class="caption">MANDELBROT.EXE - Runner</div>
+        <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
+      </div>
+      <div class="win-content">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <button id="zoomIn" class="btn primary">zoom in</button>
+          <button id="zoomOut" class="btn">zoom out</button>
+          <label style="display:inline-flex;align-items:center;gap:6px">iterations 32
+            <input id="iters" type="range" min="32" max="1024" value="256">1024
+          </label>
+          <span style="flex:1"></span>
+          <div>move:</div>
+          <div style="display:grid;grid-template-columns:repeat(3,auto);gap:4px;align-items:center">
+            <span></span> <button id="upBtn" class="btn">↑</button> <span></span>
+            <button id="leftBtn" class="btn">←</button> <button id="downBtn" class="btn">↓</button> <button id="rightBtn" class="btn">→</button>
+          </div>
+        </div>
+        <canvas id="mb" style="width:100%;aspect-ratio:16/9;display:block;background:#fff"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../assets/main.js"></script>
+  <script src="fractal.js"></script>
+</body>
+</html>

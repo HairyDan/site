@@ -1,0 +1,3 @@
+// npm i -D netlify-cli
+
+npx netlify dev
