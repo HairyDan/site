@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rocket Race — Door Prizes</title>
+<link rel="icon" href="/favicon.ico" />
+<style>
+  :root{
+    --bg:#070b19;
+    --fg:#e8e8e8;
+    --panel:#0e1430;
+    --panel2:#0b1128;
+    --edge:#2f3b63;
+    --moon:#ffe28a;
+    --trackw:min(1200px, 96vw);
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--fg); background:var(--bg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    overflow:hidden;
+  }
+
+  .wrap{position:relative; width:100%; height:100%}
+  .sky{position:absolute; inset:0; overflow:hidden; pointer-events:none}
+  canvas.star{position:absolute; inset:0; width:100%; height:100%}
+
+  .screen{position:absolute; inset:0; display:none !important}
+  .screen.active{display:block !important}
+
+  /* --- SETUP --- */
+  .setup{ display:grid; place-items:center; padding:20px; overflow:auto; }
+  .panel{
+    width:min(920px, 96vw);
+    background: linear-gradient(180deg, var(--panel), var(--panel2));
+    border:1px solid var(--edge); border-radius:14px; padding:16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .panel h1{margin:0 0 10px; letter-spacing:.02em}
+  .grid{ display:grid; gap:16px; grid-template-columns:1fr 1fr; align-items:start; }
+  @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+  label{display:block; margin:0 0 6px; opacity:.9}
+  textarea,input,button{
+    font:inherit; color:var(--fg); background:#0b1230; border:1px solid var(--edge);
+    border-radius:10px; padding:10px 12px; outline:none;
+  }
+  textarea{width:100%; min-height:260px; resize:vertical}
+  input[type=number]{width:140px; text-align:center}
+  input[type=range]{width:100%; display:block}
+  .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+  .btn{
+    cursor:pointer; background:#1031aa; border:1px solid #2a47b9;
+    padding:10px 14px; border-radius:10px; line-height:1; white-space:nowrap; flex:0 0 auto;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn.go{background:#1c884b; border-color:#25a15d}
+  .btn.danger{background:#9a2033; border-color:#b62d43}
+  .hint{opacity:.8; font-size:12px}
+
+  /* --- RACE HUD + STAGE --- */
+  .hudTop{
+    position:absolute; left:50%; transform:translateX(-50%);
+    top:10px; width:var(--trackw); z-index:5; display:flex; justify-content:flex-end; align-items:center; gap:10px;
+  }
+  .hudTop .badge{
+    background: linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.25));
+    border:1px solid rgba(255,255,255,.12);
+    padding:8px 12px; border-radius:10px; font-weight:700; letter-spacing:.02em;
+  }
+
+  .hudLeft{
+    position:absolute; left:12px; top:12px; bottom:12px; width:220px; z-index:6;
+    background: linear-gradient(180deg, rgba(0,0,0,.40), rgba(0,0,0,.25));
+    border:1px solid rgba(255,255,255,.12); border-radius:10px;
+    display:none; overflow:hidden;
+  }
+  .hudLeft.active{display:flex; flex-direction:column;}
+  .hudLeft .title{ font-weight:800; letter-spacing:.03em; font-size:14px; padding:10px 10px 6px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .boardList{ flex:1; overflow:auto; padding:8px 8px 10px; font-size:13px; line-height:1.35; }
+  .boardRow{ display:flex; align-items:center; gap:8px; padding:4px 6px; border-radius:8px; }
+  .boardRow .pos{min-width:26px; text-align:right; opacity:.9; font-variant-numeric: tabular-nums;}
+  .dot{ width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,.25); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+  .name{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:148px;}
+
+  /* podium emphasis */
+  .boardRow.rank1{ background: rgba(255,238,128,.15); }
+  .boardRow.rank2{ background: rgba(210,220,255,.12); }
+  .boardRow.rank3{ background: rgba(200,255,200,.10); }
+  .boardRow.rank1 .pos{ font-size:18px; font-weight:900; }
+  .boardRow.rank1 .name{ font-size:16px; font-weight:800; }
+  .boardRow.rank2 .pos{ font-size:16px; font-weight:800; }
+  .boardRow.rank2 .name{ font-size:15px; font-weight:700; }
+  .boardRow.rank3 .pos{ font-size:15px; font-weight:700; }
+  .boardRow.rank3 .name{ font-size:14px; font-weight:700; }
+  .boardRow .pos{ font-size:13px; }
+  .boardRow .name{ font-size:13px; }
+
+  .stage{position:absolute; inset:0; display:none; align-items:flex-end; justify-content:center;}
+  .screen.active .stage{display:flex}
+  .trackViewport{position:relative; width:var(--trackw); height:100%}
+  .trackWorld{position:absolute; left:0; top:0; width:100%; will-change: transform;}
+  .lanesBg{
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    border-left:2px solid rgba(255,255,255,.08);
+    border-right:2px solid rgba(255,255,255,.08);
+    background: linear-gradient(180deg, rgba(20,27,56,.35), rgba(10,14,32,.35));
+    box-shadow: inset 0 0 60px rgba(0,0,0,.6);
+  }
+
+  .finishLine{
+    position:absolute; left:0; width:100%; height:8px;
+    background: repeating-linear-gradient(90deg, #fff 0 24px, #000 24px 48px);
+    box-shadow: 0 2px 10px rgba(0,0,0,.6);
+  }
+  .finishLabel{
+    position:absolute; left:50%; transform:translate(-50%,-140%);
+    background:#000a; padding:6px 10px; border-radius:10px; font-weight:800; letter-spacing:.05em
+  }
+  .startLine{
+    position:absolute; left:0; width:100%; height:8px;
+    background: repeating-linear-gradient(90deg, #0ff 0 24px, #004 24px 48px);
+    box-shadow: 0 -2px 10px rgba(0,0,0,.6);
+  }
+  .startLabel{
+    position:absolute; left:50%; transform:translate(-50%, -180%);
+    background:#000a; padding:6px 10px; border-radius:10px; font-weight:800; letter-spacing:.05em
+  }
+
+  .moon{
+    position:absolute; left:50%; transform:translateX(-50%);
+    width:260px; height:260px; border-radius:50%;
+    background: radial-gradient(60% 60% at 40% 40%, #fff5cc 0%, var(--moon) 55%, #e6c56b 75%, rgba(255,255,255,0) 76%);
+    box-shadow: 0 0 80px 30px rgba(255,226,138,.25), 0 0 140px 70px rgba(255,226,138,.12);
+    z-index:1; opacity:.9;
+  }
+
+  .laneLine{position:absolute; width:100%; height:1px; background:rgba(255,255,255,.06)}
+
+  .pod{ position:absolute; will-change: transform; }
+  .stack{ position:relative; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
+  .rocket{ position:relative; z-index:2; font-size:40px; line-height:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); margin-bottom:6px; }
+  .label{
+    position:relative; z-index:10; padding:6px 10px; border-radius:10px;
+    font-weight:800; letter-spacing:.02em; white-space:nowrap;
+    border:1px solid rgba(0,0,0,.28); box-shadow: 0 3px 10px rgba(0,0,0,.35);
+    color:#000; background: #ddd;  /* replaced per-rocket */
+  }
+  .trail{
+    position:absolute; z-index:1; left:50%; transform:translateX(-50%);
+    top:38px; width:10px; height:140px; border-radius:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0), currentColor 70%, transparent);
+    filter: blur(1px) opacity(.9); pointer-events:none;
+  }
+  .pod.winner .label{
+    background: #ffd95a !important;
+    color:#000 !important; border-color: rgba(0,0,0,.25) !important;
+  }
+
+  .countdown{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    z-index:6; pointer-events:none;
+    font-weight:900; text-align:center;
+    font-size: clamp(64px, 18vw, 220px);
+    text-shadow: 0 8px 24px rgba(0,0,0,.6), 0 0 40px rgba(255,224,102,.25);
+  }
+  .countdown.show{display:flex}
+  .fadepulse{ animation: fadepulse 900ms ease-out forwards; }
+  @keyframes fadepulse{
+    0%{ opacity:0; transform:scale(0.7);}
+    20%{ opacity:1; transform:scale(1.0);}
+    100%{ opacity:0; transform:scale(1.25);}
+  }
+
+  .results{display:none !important}
+  .results.active{display:flex !important; align-items:center; justify-content:center; padding:20px}
+  .results .box{ width:min(1200px, 96vw); background:transparent; border:0; text-align:center; z-index:6; }
+  .winnersBig{
+    font-weight:900; letter-spacing:.02em; line-height:1.1;
+    text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.6), 0 0 40px rgba(255,224,102,.25);
+    font-size: clamp(44px, 10vw, 120px);
+  }
+  .btnRow{margin-top:18px; display:flex; gap:10px; justify-content:center}
+  canvas.fireworks{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PARALLAX STARS -->
+  <div class="sky">
+    <canvas class="star" id="starsFar"></canvas>
+    <canvas class="star" id="starsMid"></canvas>
+    <canvas class="star" id="starsNear"></canvas>
+  </div>
+
+  <!-- SETUP -->
+  <section class="screen setup active" id="screenSetup" aria-hidden="false">
+    <div class="panel">
+      <h1>🚀 rocket race — door prizes</h1>
+      <p class="hint">paste one name per line, choose winners & duration, then start.</p>
+      <div class="grid">
+        <div>
+          <label>attendees</label>
+          <textarea id="names" placeholder="one name per line"></textarea>
+        </div>
+        <div>
+          <label>number of winners</label>
+          <input id="winners" type="number" min="1" value="1"/>
+
+          <div style="height:12px"></div>
+          <label for="dur">race duration: <span id="durOut">20</span>s</label>
+          <input id="dur" type="range" min="5" max="300" step="1" value="20" />
+          <div class="hint">range: 5s → 5min</div>
+
+          <div class="controls">
+            <button id="btnDemo" class="btn">demo names</button>
+            <button id="btnStart" class="btn go">start race</button>
+            <button id="btnClear" class="btn danger">clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RACE -->
+  <section class="screen" id="screenRace" aria-hidden="true">
+    <div class="hudTop">
+      <div class="badge"><button id="btnAbort" class="btn danger">cancel</button></div>
+    </div>
+
+    <!-- live leaderboard -->
+    <aside id="hudLeft" class="hudLeft">
+      <div class="title">current positions</div>
+      <div id="boardList" class="boardList"></div>
+    </aside>
+
+    <div class="stage">
+      <div class="trackViewport">
+        <div class="trackWorld" id="world">
+          <div class="lanesBg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="countdown" class="countdown"></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen results" id="screenResults" aria-hidden="true">
+    <canvas class="fireworks" id="fw"></canvas>
+    <div class="box">
+      <div class="winnersBig" id="winnersHeadline">🏆 winners</div>
+      <div class="btnRow">
+        <button id="btnReplay" class="btn go">run again with same roster</button>
+        <button id="btnBack" class="btn">back to setup</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* -------------------- Parallax Stars -------------------- */
+(function starfield(){
+  const layers = [
+    { id:'starsFar', count: 140, size:[1,2], speed: 10,  alpha:0.35 },
+    { id:'starsMid', count: 110, size:[1,3], speed: 22,  alpha:0.55 },
+    { id:'starsNear',count:  80, size:[2,4], speed: 42,  alpha:0.9  },
+  ];
+  const stars = [];
+  const R = (min,max)=>min + Math.random()*(max-min);
+  const W = ()=>window.innerWidth, H = ()=>window.innerHeight;
+  function initLayer(layer){
+    const c = document.getElementById(layer.id);
+    const dpr = devicePixelRatio || 1;
+    c.width = Math.floor(W()*dpr); c.height = Math.floor(H()*dpr);
+    c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+    const arr = [];
+    for (let i=0;i<layer.count;i++){
+      arr.push({x:R(-50, W()+50), y:R(-H(), H()), r:R(layer.size[0], layer.size[1])});
+    }
+    stars.push({layer, c, ctx:c.getContext('2d'), arr});
+  }
+  function draw(dt){
+    for (const L of stars){
+      const {layer, ctx, arr} = L;
+      ctx.clearRect(0,0,W(),H());
+      ctx.fillStyle = `rgba(207,232,255,${layer.alpha})`;
+      for (const s of arr){
+        s.y += layer.speed * dt;
+        if (s.y - s.r > H()+20) s.y = -20;
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  let last; function tick(ts){ if(!last) last=ts; const dt=Math.min(0.05,(ts-last)/1000); last=ts; draw(dt); }
+  function resize(){ stars.length=0; for (const layer of layers) initLayer(layer); }
+  addEventListener('resize', resize); resize(); requestAnimationFrame(tick);
+})();
+
+/* --------------------------- Rocket Race --------------------------- */
+(function(){
+  // screens
+  const scrSetup   = document.getElementById('screenSetup');
+  const scrRace    = document.getElementById('screenRace');
+  const scrResults = document.getElementById('screenResults');
+
+  // setup controls
+  const namesEl   = document.getElementById('names');
+  const winnersEl = document.getElementById('winners');
+  const durEl     = document.getElementById('dur');
+  const durOut    = document.getElementById('durOut');
+  const btnDemo   = document.getElementById('btnDemo');
+  const btnStart  = document.getElementById('btnStart');
+  const btnClear  = document.getElementById('btnClear');
+
+  // race dom
+  const world     = document.getElementById('world');
+  const btnAbort  = document.getElementById('btnAbort');
+  const cdEl      = document.getElementById('countdown');
+  const hudLeft   = document.getElementById('hudLeft');
+  const boardList = document.getElementById('boardList');
+
+  // results dom
+  const winnersHeadline = document.getElementById('winnersHeadline');
+  const btnReplay   = document.getElementById('btnReplay');
+  const btnBack     = document.getElementById('btnBack');
+
+  // demo names
+  const MTG_DEMO = [
+    "Liliana","Jace","Chandra","Gideon","Nissa","Teferi","Ajani","Sorin",
+    "Karn","Ugin","Nicol","Garruk","Nahiri","Tamiyo","Kaya","Saheeli",
+    "Ral","Ashiok","Vivien","Ob","Elspeth","Oko","Rowan","Will",
+    "Griselbrand","Yawgmoth","Urza","Mishra","Serra","Tezzeret","Kiora","Tibalt",
+    "Avacyn","Thalia","Gisela","Sigarda","Bruna","Emrakul","Ulamog","Kozilek"
+  ];
+
+  const colorForIndex = (i,n)=>`hsl(${(i*360/Math.max(n,12))%360},78%,56%)`;
+
+  let state=null, rafId=null;
+
+  durEl.addEventListener('input', ()=>{ durOut.textContent = durEl.value; });
+
+  function setActiveScreen(which){
+    [scrSetup,scrRace,scrResults].forEach(el=>{
+      const active = el===which;
+      el.classList.toggle('active', active);
+      el.setAttribute('aria-hidden', active ? 'false':'true');
+      if (!active){ el.setAttribute('hidden',''); el.inert = true; }
+      else { el.removeAttribute('hidden'); el.inert = false; }
+    });
+  }
+
+  function parseNames(){ return (namesEl.value||'').split('\n').map(s=>s.trim()).filter(Boolean); }
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+  function randn(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+  btnStart.addEventListener('click', () => {
+    const names = parseNames();
+    if (names.length < 2){ alert('please enter at least 2 names'); return; }
+    const winnersCount = Math.max(1, Math.min(names.length, Number(winnersEl.value||1)));
+    const baseDuration = Math.max(5, Math.min(300, Number(durEl.value||20)));
+    startRace(names, winnersCount, baseDuration);
+  });
+  btnDemo.addEventListener('click', ()=>{ namesEl.value = MTG_DEMO.slice(0, 32).join('\n'); });
+  btnClear.addEventListener('click', ()=>{ namesEl.value=''; winnersEl.value=1; durEl.value=20; durOut.textContent='20'; });
+
+  btnAbort.addEventListener('click', ()=>{ teardownRace(); setActiveScreen(scrSetup); });
+  btnBack.addEventListener('click',  ()=>{ teardownRace(); setActiveScreen(scrSetup); });
+  btnReplay.addEventListener('click',()=>{ if(state) startRace(state.roster, state.winnersCount, state.baseDuration); });
+
+  function teardownRace(){
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId=null;
+    world.innerHTML = '<div class="lanesBg"></div>';
+    cdEl.classList.remove('show','fadepulse');
+    cdEl.textContent = '';
+    hudLeft.classList.remove('active');
+  }
+
+  function bigCountdown(cb){
+    cdEl.classList.add('show');
+    const seq = ['3','2','1','GO!'];
+    let i = 0;
+    function next(){
+      if (i >= seq.length){ cdEl.classList.remove('show'); cb(); return; }
+      cdEl.textContent = seq[i++];
+      cdEl.classList.remove('fadepulse'); void cdEl.offsetWidth; cdEl.classList.add('fadepulse');
+      setTimeout(next, 900);
+    }
+    next();
+  }
+
+  function updateBoard(pods){
+    hudLeft.classList.add('active');
+    const order = pods.slice().sort((a,b)=> b.p - a.p);
+    boardList.innerHTML = order.map((p,idx)=>`
+      <div class="boardRow rank${idx+1}" title="${idx+1}. ${p.name}">
+        <div class="pos">${idx+1}</div>
+        <div class="dot" style="background:${p.color}"></div>
+        <div class="name">${p.name}</div>
+      </div>
+    `).join('');
+  }
+
+  function startRace(roster, winnersCount, baseDuration){
+    teardownRace();
+    setActiveScreen(scrRace);
+
+    state = { roster: roster.slice(), winnersCount, baseDuration };
+
+    const names = roster.slice();
+    const N = names.length;
+
+    // ----- TRACK LENGTH SCALES WITH DURATION -----
+    const NOMINAL_DURATION = 20;          // seconds
+    const BASE_BOTTOM_PAD  = 2200;        // px at nominal duration
+    const pixelSpeedNominal = BASE_BOTTOM_PAD / NOMINAL_DURATION; // ~110 px/s
+
+    // scale track distance with chosen duration
+    const durationScale = baseDuration / NOMINAL_DURATION;
+    const worldBottomPad = BASE_BOTTOM_PAD * durationScale; // longer track for longer race
+
+    // WORLD GEOMETRY
+    const viewportH = window.innerHeight;
+    const trackW = Math.min(1200, document.body.clientWidth*0.96);
+    const leftPad = 80, rightPad = 80;
+    const innerW = trackW - leftPad - rightPad;
+    const xStep = (N>1) ? innerW/(N-1) : 0;
+
+    const finishY = 800;
+    const moonY   = 520;
+    const startY = finishY + worldBottomPad;      // start further away for longer duration
+    const trackLenPx = startY - finishY;          // equals worldBottomPad
+    const worldHeight = startY + 500;
+    world.style.height = `${worldHeight}px`;
+
+    // FINISH + MOON
+    const fin = document.createElement('div');
+    fin.className = 'finishLine'; fin.style.top = `${finishY}px`;
+    const finLabel = document.createElement('div');
+    finLabel.className = 'finishLabel'; finLabel.style.top = `${finishY}px`; finLabel.textContent = 'FINISH';
+    const moon = document.createElement('div');
+    moon.className = 'moon'; moon.style.top = `${moonY - 130}px`;
+    world.appendChild(fin); world.appendChild(finLabel); world.appendChild(moon);
+
+    // START
+    const startLine = document.createElement('div');
+    startLine.className = 'startLine'; startLine.style.top = `${startY}px`;
+    const startLabel = document.createElement('div');
+    startLabel.className = 'startLabel'; startLabel.style.top = `${startY}px`; startLabel.textContent = 'START';
+    world.appendChild(startLine); world.appendChild(startLabel);
+
+    for (let i=0;i<12;i++){
+      const hl = document.createElement('div');
+      hl.className = 'laneLine';
+      hl.style.top = `${finishY + 120 + i*160}px`;
+      world.appendChild(hl);
+    }
+
+    // PODS
+    const pods = [];
+    for (let idx=0; idx<N; idx++){
+      const name = names[idx];
+      const color = colorForIndex(idx, N);
+
+      const pod = document.createElement('div');
+      pod.className='pod';
+      pod.style.color = color; // trail tint
+
+      const stack = document.createElement('div'); stack.className='stack';
+      const rocket = document.createElement('div'); rocket.className='rocket'; rocket.textContent='🚀';
+      const label = document.createElement('div'); label.className='label'; label.textContent = name;
+      label.style.background = color; label.style.color = '#000'; label.style.borderColor = 'rgba(0,0,0,.28)';
+      const trail = document.createElement('div'); trail.className='trail';
+
+      stack.appendChild(rocket); stack.appendChild(label); stack.appendChild(trail);
+      pod.appendChild(stack); world.appendChild(pod);
+
+      const x = leftPad + idx * xStep;
+      const jitter = (Math.random() - 0.5) * 10;
+      const yStart = startY + (Math.random()-0.5)*80;
+
+      // We keep **pixel speed roughly constant** across durations
+      // by deriving baseSpeed (progress/sec) from the track length.
+      // baseSpeed * trackLenPx ≈ pixelSpeedNominal (± small randomness)
+      const pixelSpeed_i = pixelSpeedNominal * (0.95 + Math.random()*0.13); // small per-rocket variance
+      const baseSpeed = pixelSpeed_i / trackLenPx;  // progress/sec
+
+      // Smooth speed noise (OU process)
+      const tau = 1.0 + Math.random()*1.0;     // 1..2s smoothing
+      const sigma = 0.5 + Math.random()*0.5;   // noise scale
+      const ou0 = (Math.random()-0.5)*0.8;
+
+      const pObj = {
+        name, color, el: pod, x: x + jitter,
+        p:0, y:yStart, finished:false, winner:false,
+        baseSpeed, ou: ou0, tau, sigma,
+        vLast: 0, coasting:false, vCoast:0,
+        glide:false, glideTargetY: finishY - 120,
+        trackLenPx, startY, finishY
+      };
+      pods.push(pObj);
+
+      pod.style.transform = `translate(${pObj.x}px, ${pObj.y}px)`;
+    }
+
+    // CAMERA (kept smooth)
+    let cameraY = clamp(startY - viewportH*0.6, 0, worldHeight - viewportH);
+    world.style.transform = `translateY(${-cameraY}px)`;
+
+    const placements = [];
+    let phase = 'countdown';
+    let victoryStart = 0;
+
+    function startVictory(ts){
+      phase = 'victory';
+      victoryStart = ts;
+
+      // confirm top-K winners (they're already flagged when finishing)
+      for (let i=0;i<pods.length;i++){
+        const p = placements[i]; if (!p) break;
+        if (i < state.winnersCount){ p.winner = true; p.el.classList.add('winner'); }
+      }
+      // others: coast to stop where they are (no crossing)
+      for (const p of pods){
+        if (!p.winner){
+          p.coasting = true;
+          p.vCoast = Math.max(20, p.vLast * p.trackLenPx); // px/s rough
+        }
+      }
+    }
+
+    function updateBoardAndCamera(){
+      const leaderY = Math.min(...pods.map(q=>q.y));
+      const targetCamY = clamp(leaderY - viewportH*0.6, 0, worldHeight - viewportH);
+      cameraY += (targetCamY - cameraY)*0.12;
+      world.style.transform = `translateY(${-cameraY}px)`;
+      updateBoard(pods);
+    }
+
+    function frame(ts){
+      let dt = 0.016;
+      if (!frame._last) frame._last = ts;
+      dt = Math.min(0.05, (ts - frame._last)/1000);
+      frame._last = ts;
+
+      if (phase === 'race'){
+        const leaderP = Math.max(...pods.map(p=>p.p));
+        const sorted = pods.slice().sort((a,b)=> b.p - a.p);
+        const secondP = sorted[1] ? sorted[1].p : leaderP;
+
+        const OU_WEIGHT = 0.25, CHASE_K = 0.9, DRAG_K = 0.5, MIN_FRAC = 0.10;
+
+        for (const p of pods){
+          if (p.finished && !p.glide) continue;
+
+          // OU noise
+          p.ou += (-p.ou / p.tau) * dt + p.sigma * Math.sqrt(dt) * randn();
+
+          if (!p.finished){
+            const gap = leaderP - p.p;
+            const vChase = CHASE_K * gap * p.baseSpeed;
+
+            let vDrag = 0;
+            if (p.p >= leaderP - 1e-6){
+              const lead = Math.max(0, leaderP - secondP);
+              vDrag = DRAG_K * lead * p.baseSpeed;
+            }
+
+            let v = p.baseSpeed * (1 + OU_WEIGHT * p.ou) + vChase - vDrag;
+            const vMin = p.baseSpeed * MIN_FRAC; if (v < vMin) v = vMin;
+
+            p.vLast = v;
+
+            p.p = Math.min(1, p.p + v * dt);
+            p.y = p.startY - p.p * p.trackLenPx;
+
+            if (p.y <= p.finishY && !p.finished){
+              p.finished = true;
+              placements.push(p);
+
+              // winners: turn gold & glide immediately over the line
+              if (placements.length <= state.winnersCount){
+                p.winner = true;
+                p.el.classList.add('winner');
+                p.glide = true;
+              } else {
+                // non-winner: clamp at line
+                p.y = p.finishY;
+              }
+            }
+          }
+
+          if (p.glide){
+            const target = p.glideTargetY;
+            const speed = 140; // px/s upward
+            p.y = Math.max(target, p.y - speed * dt);
+            if (p.y <= target) p.glide = false;
+          }
+
+          p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        }
+
+        updateBoardAndCamera();
+
+        if (placements.length >= state.winnersCount){
+          startVictory(ts);
+        }
+        rafId = requestAnimationFrame(frame);
+        return;
+      }
+
+      if (phase === 'victory'){
+        const winners = placements.slice(0, state.winnersCount);
+        const floatTargetY = Math.max(60, (520 - 160));
+
+        for (const p of pods){
+          if (p.winner){
+            const speed = 160;
+            p.y = Math.max(floatTargetY, p.y - speed * dt);
+            p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+          } else if (p.coasting){
+            const tauStop = 0.9;
+            p.vCoast += (-p.vCoast/tauStop) * dt;
+            if (p.vCoast < 2) p.vCoast = 0;
+            if (p.vCoast > 0){
+              const dy = -Math.min(p.vCoast * dt, Math.max(0, p.y - 800)); // don't cross finish
+              p.y += dy;
+              p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+            }
+          }
+        }
+
+        if (winners.length){
+          const topY = Math.min(...winners.map(w=>w.y));
+          const targetCamY = clamp(topY - viewportH*0.5, 0, worldHeight - viewportH);
+          cameraY += (targetCamY - cameraY)*0.10;
+          world.style.transform = `translateY(${-cameraY}px)`;
+        }
+
+        updateBoard(pods);
+
+        if (ts - victoryStart >= 5000){
+          finishRace(placements, state.winnersCount);
+          return;
+        }
+        rafId = requestAnimationFrame(frame);
+        return;
+      }
+    }
+
+    function beginAfterCountdown(){
+      frame._last = undefined;
+      updateBoard(pods);
+      const startTs = performance.now();
+      (function delayThenGo(now){
+        if (now - startTs > 50){
+          phase = 'race';
+          rafId = requestAnimationFrame(frame);
+        } else requestAnimationFrame(delayThenGo);
+      })(startTs);
+    }
+
+    updateBoard(pods);
+    world.style.transform = `translateY(${-cameraY}px)`;
+    bigCountdown(beginAfterCountdown);
+  }
+
+  function finishRace(placements, winnersCount){
+    const winners = placements.slice(0, winnersCount).map(p=>p.name);
+    winnersHeadline.textContent =
+      winners.length === 1 ? `🏆 ${winners[0]}!` :
+      `🏆 ${winners.join(' · ')}`;
+    setActiveScreen(scrResults);
+    startFireworks();
+  }
+
+  /* Fireworks */
+  let fwAnim, particles=[];
+  function startFireworks(){
+    const c = document.getElementById('fw');
+    const ctx = c.getContext('2d');
+    function resize(){
+      const dpr = devicePixelRatio||1;
+      c.width = Math.floor(c.clientWidth * dpr);
+      c.height= Math.floor(c.clientHeight* dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    resize(); addEventListener('resize', resize);
+
+    const colors = ['#ff6b6b','#ffd93d','#4d96ff','#9b5de5','#6bcb77','#f1a7ff','#ffa552'];
+    function spawn(x,y){
+      const count = 160;
+      for (let i=0;i<count;i++){
+        const a = Math.random()*Math.PI*2, s = Math.random()*4 + 1;
+        particles.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s - 1.4, life: 1, decay: Math.random()*0.015 + 0.008, color: colors[(Math.random()*colors.length)|0] });
+      }
+    }
+
+    let last=0, timer=0;
+    function tick(ts){
+      if (!last) last = ts;
+      const dt = Math.min(0.04, (ts - last)/1000); last = ts;
+      timer += dt;
+
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(0,0,c.clientWidth,c.clientHeight);
+
+      if (timer > 0.55){
+        timer = 0;
+        const x = 100 + Math.random()*(c.clientWidth-200);
+        const y = 80 + Math.random()*(c.clientHeight*0.5);
+        spawn(x,y);
+      }
+
+      for (let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy; p.vy += 0.03; p.life -= p.decay;
+        if (p.life <= 0){ particles.splice(i,1); continue; }
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 2, 2);
+      }
+      ctx.globalAlpha = 1;
+      fwAnim = requestAnimationFrame(tick);
+    }
+    fwAnim = requestAnimationFrame(tick);
+  }
+})();
+</script>
+</body>
+</html>
