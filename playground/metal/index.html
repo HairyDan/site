@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Death metal logo generator — Dan Schormans</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/playground/lab.css">
+  <link rel="stylesheet" href="metal.css">
+  <script src="/assets/main.js"></script>
+  <script src="metal-core.js" defer></script>
+  <script src="metal.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <a class="wordmark" href="/" aria-label="Dan Schormans, home">Dan Schormans</a>
+    <nav aria-label="Main navigation"><a href="/blog/">blog</a><a href="/playground/" aria-current="page">playground</a><a href="/dschormansWebsiteCV.pdf">cv</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button></nav>
+  </header>
+  <main id="main" class="container lab">
+    <nav class="lab-nav" aria-label="Playground"><a href="/playground/">all experiments</a><a href="/playground/life/">cellular automata</a><a href="/playground/fractal/">fractals</a><a href="/playground/metal/" aria-current="page">death metal</a><a href="/playground/dweet/">dweets</a><a href="/playground/rocketrace/">rocket race</a></nav>
+    <h1 class="title">death metal logo generator</h1>
+    <p class="playground-intro">i've always thought it would be funny to make one of these. give it a name, grow some thorns, then keep going until nobody can read it.</p>
+    <div class="lab-controls metal-name">
+      <label for="bandName">name <input id="bandName" type="text" value="MORTAL COIL" maxlength="24" spellcheck="false" autocomplete="off" aria-describedby="nameHelp"></label>
+      <label>seed <input id="seed" type="number" min="0" max="4294967295" step="1" value="42" required></label>
+      <button id="shuffle" class="btn" type="button">new seed</button>
+      <label>starting point <select id="preset"><option value="roots">roots &amp; thorns</option><option value="web">cobweb</option><option value="lost">lost the name</option><option value="custom">custom</option></select></label>
+    </div>
+    <p class="lab-help" id="nameHelp">a–z, numbers, spaces, &amp;, hyphens and apostrophes. up to 24 characters.</p>
+    <div class="metal-stage" id="metalStage"><div id="preview"></div></div>
+    <div class="lab-status"><output id="metalStats" aria-live="off">growing…</output><span id="message" role="status"></span></div>
+    <div class="metal-controls">
+      <label for="thorns"><span>thorns</span><output id="thornsValue" for="thorns" aria-hidden="true">82%</output><input id="thorns" type="range" min="0" max="100" value="82"></label>
+      <label for="web"><span>webbing</span><output id="webValue" for="web" aria-hidden="true">62%</output><input id="web" type="range" min="0" max="100" value="62"></label>
+      <label for="warp"><span>warp</span><output id="warpValue" for="warp" aria-hidden="true">68%</output><input id="warp" type="range" min="0" max="100" value="68"></label>
+      <label for="weight"><span>weight</span><output id="weightValue" for="weight" aria-hidden="true">68%</output><input id="weight" type="range" min="0" max="100" value="68"></label>
+      <label for="reach"><span>reach</span><output id="reachValue" for="reach" aria-hidden="true">82%</output><input id="reach" type="range" min="0" max="100" value="82"></label>
+      <label for="symmetry"><span>ornament symmetry</span><output id="symmetryValue" for="symmetry" aria-hidden="true">95%</output><input id="symmetry" type="range" min="0" max="100" value="95"></label>
+    </div>
+    <div class="lab-toolbar">
+      <label>ink <select id="ink"><option value="white">white</option><option value="black">black</option></select></label>
+      <label><input id="background" type="checkbox"> background in export</label>
+      <button id="saveSvg" class="btn" type="button">save svg</button>
+      <button id="savePng" class="btn" type="button">save png</button>
+      <button id="share" class="btn" type="button">copy setup link</button>
+      <button id="reset" class="btn" type="button">reset sliders</button>
+    </div>
+    <p class="lab-help">exports are transparent unless you tick background. svg keeps the actual paths; png is 2400 × 1240. the same name, seed and sliders give the same logo.</p>
+    <details class="lab-notes">
+      <summary>what's the maths?</summary>
+      <p>each letter starts as a few lines. a sum of sine waves bends those lines, and variable-width outlines give them some weight. no fonts to download, or to go missing when you open the svg.</p>
+      <p>thorns grow out of the letter strokes. each one follows a curved path, gets thinner towards its tip, and can grow smaller branches of its own. reach changes their length; thorns changes how many get to grow.</p>
+      <p>webbing joins nearby points on different branches and letters with thin quadratic curves. a spatial grid keeps that search local. turn it down if the name has completely disappeared.</p>
+      <p>ornament symmetry reflects the extra outer branches. turning it down lets the two sides drift apart. it leaves the letters facing the right way, which is possibly a bit cowardly.</p>
+      <p>all the random choices come from the seed. nothing runs once you've stopped moving the sliders.</p>
+    </details>
+    <noscript><p>This experiment needs JavaScript.</p></noscript>
+  </main>
+  <footer class="site-footer container"><a href="/playground/">← playground</a><a href="/">home</a></footer>
+</body>
+</html>

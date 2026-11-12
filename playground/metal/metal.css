@@ -1,0 +1,17 @@
+.metal-name label:first-child { flex: 1 1 280px; }
+.metal-name #bandName { width: min(100%, 360px); flex: 1; font: 17px/1.5 var(--mono); letter-spacing: .05em; }
+.metal-name + .lab-help { margin-bottom: 14px; }
+.metal-stage { aspect-ratio: 60 / 31; border: 1px solid var(--line); background: #101112; }
+.metal-stage[data-ink="black"] { background: #fffdf5; }
+#preview { display: grid; place-items: center; width: 100%; height: 100%; }
+#preview svg { display: block; width: 100%; height: 100%; }
+#preview p { margin: 20px; color: #b0b3b5; font: 13px/1.6 var(--mono); }
+.metal-stage[data-ink="black"] #preview p { color: #626568; }
+.metal-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px 30px; margin-block: 18px 24px; }
+.metal-controls label { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; font-size: 12px; }
+.metal-controls input[type="range"] { width: 100%; margin: 0; grid-column: 1 / -1; }
+.metal-controls output { color: var(--meta); font: 11px/1.7 var(--mono); }
+@media (max-width: 600px) {
+  .metal-controls { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+  .metal-name label:first-child { flex-basis: 100%; }
+}
