@@ -72,6 +72,16 @@
               out.push('<ul>' + items.map(it => `<li>${inline(it, refIx)}</li>`).join('') + '</ul>');
               continue;
           }
+          if (/^>\s?/.test(line)) {
+              flush();
+              const quote = [];
+              while (i < body.length && /^>\s?/.test(body[i])) {
+                  quote.push(body[i].replace(/^>\s?/, ''));
+                  i++;
+              }
+              out.push(`<blockquote><p>${inline(quote.join(' '), refIx)}</p></blockquote>`);
+              continue;
+          }
           if (/^\s*\d+\.\s+/.test(line)) {
               flush();
               const items = [];

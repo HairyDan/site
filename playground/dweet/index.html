@@ -1,94 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Playground — Dan Schormans</title>
-  <link rel="stylesheet" href="../../assets/styles.css" />
-  <style>
-    /* small extras for the form */
-    .form-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .field { width:100%; }
-    textarea#dweetInput{
-      width:100%; min-height: 140px; resize: vertical; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      border:2px solid var(--win-light); border-right-color:var(--win-dark); border-bottom-color:var(--win-dark);
-      background: var(--win-face); color: var(--text); padding:8px;
-    }
-    pre#jsOut{
-      margin:0; white-space:pre-wrap; word-break:break-word; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
-    .frames{ display:grid; gap:12px; }
-    @media (min-width: 900px){ .frames{ grid-template-columns: 1fr 1fr; } }
-    iframe#vizFrame{ width:100%; height: 420px; border:0; background: var(--win-face); }
-    .small { font-size:12px; color: var(--meta); margin-top:6px; }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dweet unpacker — Dan Schormans</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/playground/lab.css">
+  <link rel="stylesheet" href="dweet.css">
+  <script src="/assets/main.js"></script>
+  <script src="unpack.js" defer></script>
+  <script src="runtime.js" defer></script>
+  <script src="dweets.js" defer></script>
 </head>
 <body>
-
-  <div id="themeToggle"
-  class="theme-toggle"
-  role="button"
-  aria-label="Toggle light/dark theme"
-  aria-pressed="false"
-  title="Toggle theme">
-<span class="icon-sun" aria-hidden="true">☼</span>
-<span class="icon-moon" aria-hidden="true">☾</span>
-</div>
-
-  <header>
-    <div class="container">
-      <h1 class="title">playground</h1>
-      <p class="subtitle">tiny toys & experiments</p>
-      <nav class="navbar" style="margin-bottom:8px">
-        <a class="btn" href="../../"><- home</a>
-        <a class="btn primary" href="/playground/dweet/">dweet unpacker</a>
-        <a class="btn" href="/playground/life/">game of life</a>
-        <a class="btn" href="/playground/fractal/">fractal</a>
-      </nav>
-    </div>
-
-    
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <a class="wordmark" href="/" aria-label="Dan Schormans, home">Dan Schormans</a>
+    <nav aria-label="Main navigation"><a href="/blog/">blog</a><a href="/playground/" aria-current="page">playground</a><a href="/dschormansWebsiteCV.pdf">cv</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button></nav>
   </header>
-
-  <main class="container">
-    ok this one might require a bit of explanation.
-    <br><br>
-    I absolutely love <a href="https://dwitter.net">dwitter</a>, a site where you can code golf some beautiful JS visualisations with 140characters. Except I absolutely hate code golf :( so here's a little dweet unpacker to try and create some more usable dweets
-    <br><br>
-    disclaimer, it's not actually in a state where the dweet code is any more readable right now, but you can edit the generated verbose JS and still get a visualisation :)
-    <section class="win95">
-      <div class="titlebar"><div class="caption">DWEETS.EXE — Runner</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>
-      <div class="win-content">
-        <div class="field">
-          <label for="dweetInput">dweet code (the frame function body, e.g. <code>c.fillRect(0,0,1920,1080)</code>)</label>
-          <textarea id="dweetInput" placeholder="example: c.width|=0; for(i=0;i<200;i++) c.fillRect(960+S(t+i/9)*200, 540+C(t+i/7)*200, 2,2)"></textarea>
-          <div class="small">Shorthands supported: <code>S</code>=sin, <code>C</code>=cos, <code>T</code>=tan, <code>R</code>=random, <code>PI</code>=π, <code>c</code>=2D ctx, <code>x</code>=canvas, <code>t</code>=seconds.</div>
-        </div>
-        <div class="form-row" style="margin-top:10px;">
-          <button class="btn primary" id="runBtn">Run</button>
-          <button class="btn" id="exampleBtn">Load example</button>
-          <button class="btn" id="clearBtn">Clear</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- OUTPUT windows -->
-    <div class="frames">
-      <section class="win95">
-        <div class="titlebar"><div class="caption">GENERATED.JS — Notepad</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>
-        <div class="win-content"><pre id="jsOut">// your JS will appear here</pre></div>
+  <main id="main" class="container lab">
+    <nav class="lab-nav" aria-label="Playground"><a href="/playground/">all experiments</a><a href="/playground/life/">cellular automata</a><a href="/playground/fractal/">fractals</a><a href="/playground/dweet/" aria-current="page">dweets</a><a href="/playground/rocketrace/">rocket race</a></nav>
+    <h1 class="title">dweet unpacker</h1>
+    <div class="playground-intro">
+      <p>ok this one might require a bit of explanation.</p>
+      <p>i absolutely love <a href="https://dwitter.net">dwitter</a>, a site where you can code golf some beautiful javascript visualisations with 140 characters. except i absolutely hate code golf :( so here's a little dweet unpacker to try and create some more usable dweets</p>
+      <p>paste a dweet, unpack it, then mess around with the readable version. you can run either one and compare. ctrl + enter runs whichever editor you're in.</p>
+    </div>
+    <div class="lab-controls">
+      <label>example <select id="example"><option value="bars">moving bars</option><option value="spiral">spiral</option><option value="waves">waves</option></select></label>
+      <button class="btn" id="exampleBtn" type="button">load example</button>
+      <button class="btn" id="clearBtn" type="button">clear</button>
+      <output id="charCount" aria-live="off"></output>
+    </div>
+    <div class="dweet-editors">
+      <section>
+        <label class="editor-label" for="dweetInput">dweet</label>
+        <textarea id="dweetInput" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-describedby="dweetHelp"></textarea>
+        <button class="btn primary" id="runBtn" type="button">unpack &amp; run dweet</button>
       </section>
-
-      <section class="win95">
-        <div class="titlebar"><div class="caption">VIEW.TAB — Canvas</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>
-        <div class="win-content">
-          <iframe id="vizFrame" sandbox="allow-scripts"></iframe>
-          <div class="small">Sandboxed preview. Reloads on each “Run”.</div>
-        </div>
+      <section>
+        <label class="editor-label" for="jsOut">readable javascript</label>
+        <textarea id="jsOut" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"></textarea>
+        <div class="lab-controls"><button class="btn" id="runEditedBtn" type="button">run edited javascript</button><button class="btn" id="copyBtn" type="button">copy</button><button class="btn" id="downloadBtn" type="button">save .js</button></div>
       </section>
     </div>
+    <p class="lab-help" id="dweetHelp">c = canvas, x = 2d context, t = seconds. S / C / T = sin / cos / tan. R makes rgba colours; use Math.random() for randomness. the output expects a canvas with id="canvas".</p>
+    <p id="conversionNote" class="lab-help" role="status"></p>
+    <div class="lab-toolbar">
+      <button class="btn" id="pauseBtn" type="button" disabled>pause</button><button class="btn" id="stepBtn" type="button" disabled>step</button><button class="btn" id="restartBtn" type="button" disabled>restart</button><button class="btn" id="stopBtn" type="button" disabled>stop</button>
+      <output id="previewStatus" aria-live="off">preview stopped</output>
+    </div>
+    <div class="dweet-preview"><iframe id="vizFrame" title="Dweet preview" sandbox="allow-scripts"></iframe></div>
+    <p class="dweet-error" id="previewError" role="alert" hidden></p>
+    <details class="lab-notes">
+      <summary>what gets unpacked?</summary>
+      <p>the short canvas, time, colour and maths names get expanded, and the code gets spaced out and indented. strings, comments, regular expressions and template text are left alone. if local scopes or dynamic code make a rename uncertain, the aliases stay, with their definitions in the setup.</p>
+      <p>this doesn't invent meaningful names for a, b and whatever else someone squeezed into 140 characters, or turn every code-golf trick into sensible control flow. it keeps the original operations.</p>
+      <p>the preview runs canvas-only code in an isolated worker, so stop still works if a loop gets stuck. DOM tricks aren't supported in the preview. pause freezes the clock; step advances it by 1/60 second. the two editors are saved in this browser when storage is available.</p>
+      <p><a href="https://www.dwitter.net/about">about dwitter</a> · <a href="https://www.dwitter.net/h/api">dwitter shorthand reference</a></p>
+    </details>
+    <noscript><p>This experiment needs JavaScript.</p></noscript>
   </main>
-  <script src="../../assets/main.js"></script>
-  <script src="/playground/dweet/dweets.js"></script>
+  <footer class="site-footer container"><a href="/">← home</a><a href="/blog/">blog</a></footer>
 </body>
 </html>

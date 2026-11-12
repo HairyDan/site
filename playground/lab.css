@@ -1,0 +1,41 @@
+.lab { padding-top: 18px; }
+.lab-nav { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 24px; font-size: 13px; }
+.lab > .title { margin-bottom: 10px; }
+.lab-controls, .lab-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; margin-block: 12px; }
+.lab-controls label, .lab-toolbar label { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 12px; }
+.lab select, .lab input[type="number"], .lab input[type="text"], .lab input:not([type]) { max-width: 100%; border: 1px solid var(--line); border-radius: 0; background: var(--bg); color: var(--text); padding: 5px 7px; font-size: 12px; }
+.lab input[type="number"] { width: 78px; }
+.lab #seed { width: 100px; }
+.lab #rule { width: 112px; }
+.lab input[type="range"] { width: 90px; accent-color: var(--accent); }
+.lab input[type="checkbox"] { accent-color: var(--accent); }
+.lab output { font-variant-numeric: tabular-nums; }
+.lab-toolbar { padding-block: 12px; border-top: 1px solid var(--line); }
+.simulation-stage, .fractal-stage { position: relative; width: 100%; height: clamp(260px, 55vh, 540px); overflow: hidden; border: 1px solid var(--line); background: #0c1720; }
+.simulation-stage { height: auto; aspect-ratio: 8 / 5; max-height: 540px; }
+.simulation-stage canvas, .fractal-stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.simulation-stage canvas { image-rendering: pixelated; cursor: crosshair; }
+.fractal-stage { touch-action: none; cursor: grab; }
+.fractal-stage:active { cursor: grabbing; }
+.fractal-stage canvas { position: absolute; inset: 0; }
+.fractal-stage canvas[hidden] { display: none; }
+.lab-status { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 7px; color: var(--meta); font: 11px/1.6 var(--mono); }
+.lab-status span { min-width: 0; overflow-wrap: anywhere; }
+.simulation-stage:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.lab-status #message, .lab-status #fractalMessage { color: var(--accent); }
+.lab-help { color: var(--meta); font-size: 12px; margin-bottom: 18px; }
+.lab-notes { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 14px; font-size: 13px; }
+.lab-notes summary { cursor: pointer; }
+.lab-notes p { max-width: 74ch; margin-top: 14px; }
+.file-input input { max-width: 200px; font-size: 11px; }
+.experiment-index { max-width: 700px; }
+.experiment-index dt { font-weight: bold; margin-top: 24px; }
+.experiment-index dd { margin: 5px 0; }
+[hidden] { display: none !important; }
+@media (max-width: 600px) {
+  .lab-controls, .lab-toolbar { gap: 10px; }
+  .fractal-stage { height: 360px; }
+  .lab #model { max-width: 180px; }
+}
+
+.playground-intro { max-width: 74ch; }

@@ -1,38 +1,19 @@
-# microservices: the hype, the hangover, the middle ground
+when i started out (~8 years ago), every job spec said "microservices". we broke monoliths into tiny boxes, drew neat diagrams, talked about strangler patterns, decomposition, branching by abstraction. it felt so academic and serious, we felt like real engineers.
 
-when i started out (~8 years ago), every job spec said “microservices.” we broke monoliths into tiny boxes, drew neat diagrams, we talked about strangler patterns, decomposition, branching by abstraction, it felt so academic and serious, we felt like real engineers.
+a few years later, i see the opposite every day on linkedin. apparently we should have kept the monolith.
 
-a few years later, i see the opposite every day on linkedin
+i don't think we imagined the benefits. being able to deploy a small change without taking the whole application along with it is lovely. i strongly maintain that there is no better devX than a seriously quick deploy, there's probably another sloppy blog post in the works about that. being able to scale the bit that's actually busy is useful too.
 
-## why the hype made sense
-- **team autonomy.** small services, small blast radius, ship independently.
-- **fast fast FAST deploys.** i strongly maintain that there is no better devX than a seriously quick deploy, there's probably another sloppy blog post in the works about the relationship between deploy speed and team velocity on half your projects
-- **right tool for the job.** pick the language/storage that fits the feature.
-- **scaling.** scale hot paths without scaling everything, leverage serverless to seriously save money
+but you do have to run all the things you've drawn boxes around. each one needs a deployment pipeline, logs, alerts, some way of finding out why it's broken. then you need to find out why three perfectly healthy services are failing to do something between them. "just use events" is doing quite a lot of work in some of these conversations.
 
-all true. all useful. but the fine print mattered.
+and if the same team owns all of it, and a feature still means coordinating changes across five repos, i'm not sure how much independence you've bought yourself. you've certainly given yourself more places to look.
 
-## what hurts?
-- **complexity tax.** 12 services became 120; each needed ci, deploy, logging, metrics, alerts, dashboards.
-- **ops gravity.** service discovery, retries, backoff, circuit breakers, tls—everywhere.
-- **data consistency.** “just use events” turned into glue code and mystery queues.
-- **latency + costs.** extra hops, extra bills. debugging in distributed land took longer.
-- **org fit.** a lot of “microservices” were still one big team pretending otherwise.
+i can see why people started putting things back together. i just find it odd that we've managed to turn that into another thing to be dogmatic about.
 
-## the pendulum swing
-so people did the obvious thing: **fewer services, fatter services, better boundaries.** the phrase “modular monolith” reappeared. i don’t think microservices “failed”; we just learned where they’re worth it.
+a small team working out what a product even is probably has enough to do already. keeping it together makes sense to me. if a part of it needs to scale separately, or another team needs to own and deploy it, there's a reason to split it out. i'd want to know what that split was going to make easier before spending time on it.
 
-## my working rule of thumb
-- **monolith (modular):** new products, small teams, frequent changes, unknown domain.
-- **a few services:** clear domain seams (auth, billing, media pipeline), separate ownership, real scaling/latency constraints.
-- **lots of services:** platform orgs with strong tooling, paved roads, and the budget/discipline to run them.
+it feels like we're in a strange place with interviews at the moment, where i have to try and work out which school of thought my interviewer adheres to before answering an architecture question. that's a bad thing if you ask me. i want to talk about the problem, but there's this little distraction of trying to work out whether the word "microservice" is going to get me points or lose them.
 
-> simple first. split when it’s obviously better. focus on gaining value from every split, not killing yourself to split on principal
+it reminds me a bit of the cargo cult of test-driven-development (when candidates in an interview ask if they should start their coding challenge with tests, i politely let them know that we don't need to worry about pretending that we actually follow TDD strictly (a practice which only ever seems to appear in job interviews)).
 
-> draw fewer boxes than you want to—then let real pain justify every new one.
-
-it feels like we're in a strange liminal space right now where, when asked in an interview, i have to try and ascertain which school of thought my interviewer adheres to, and that's a bad thing if you ask me. my youtube algorithm has shifted from [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM) to [Microservices are Technical Debt](https://www.youtube.com/watch?v=LcJKxPXYudE) over the course of a few short years. the pendulum has swung from a wierd obsession in one direction to the other. i think we need to be reasonable before we make the same mistake with the next trend (i refuse to mention AI).
-
-it reminds me a bit of the cargo cult of test-driven-development (when candidates in an interview ask if they should start their coding challenge with tests, i politely let them know that we don't need to worry about pretending that we like TDD here)
-
-the fashion changed; the fundamentals didn’t. good boundaries, good tooling, boring deploys. the rest is just diagram style.
+my youtube algorithm has shifted from [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM) to [Microservices are Technical Debt](https://www.youtube.com/watch?v=LcJKxPXYudE) over the course of a few short years. the pendulum has swung from a weird obsession in one direction to the other. i think we need to be reasonable before we make the same mistake with the next trend (i refuse to mention AI).

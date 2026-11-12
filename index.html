@@ -1,136 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dan Schormans</title>
-  <meta name="description" content="Personal site of Dan Schormans. Blog, playground, and a few notes." />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Dan Schormans. Backend software engineer. Java, AWS, and a few distractions.">
+  <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/assets/styles.css">
-    
+  <link rel="stylesheet" href="/assets/blog-tags.css">
+  <script src="/assets/main.js"></script>
+  <script src="/assets/posts.js?v=3" defer></script>
 </head>
 <body>
-
-  <div id="themeToggle"
-  class="theme-toggle"
-  role="button"
-  aria-label="Toggle light/dark theme"
-  aria-pressed="false"
-  title="Toggle theme">
-<span class="icon-sun" aria-hidden="true">☼</span>
-<span class="icon-moon" aria-hidden="true">☾</span>
-</div>
-  <header>
-    <div class="container">
-      <h1 class="title">Dan Schormans</h1>
-      <p class="subtitle">backend software engineer with 8 years of experience. java/aws specialist. currently working (@grabyo) to do cool stuff with videos on the cloud</p>
-      <div class="navbar">
-        <a class="btn" href="blog/">blog</a>
-        <a class="btn" href="playground/dweet">playground</a>
-        <a class="btn" href="dschormansWebsiteCV.pdf" target="_blank" rel="noopener">cv</a>
-        <a class="btn" href="https://github.com/HairyDan" target="_blank" rel="noopener">github</a>
-        <a class="btn" href="https://www.linkedin.com/in/daniel-schormans-57064015b/" target="_blank" rel="noopener">linkedin</a>
-        <a class="btn" href="mailto:dan@schormans.com">e-mail</a>
-      </div>
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <div class="masthead">
+      <h1 class="site-name">Dan Schormans</h1>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button>
     </div>
+    <p class="byline">backend software engineer. java / aws. formerly doing cool stuff with videos in the cloud <a href="https://grabyo.com">@grabyo</a>. now helping prescribers <a href="https://www.heliosx.com/">@heliosx</a>.</p>
+    <nav aria-label="Main navigation">
+      <a href="/blog/">blog</a>
+      <a href="/playground/">playground</a>
+      <a href="/dschormansWebsiteCV.pdf">cv</a>
+      <a href="https://github.com/HairyDan">github</a>
+      <a href="https://www.linkedin.com/in/daniel-schormans-57064015b/">linkedin</a>
+      <a href="mailto:dan@schormans.com">e-mail</a>
+    </nav>
   </header>
-
-  <main class="container">
-    <section class="win95">
-      <div class="titlebar">
-        <div class="caption">README.TXT — Notepad</div>
-        <div class="controls">
-          <div class="ctrl">_</div>
-          <div class="ctrl">▢</div>
-          <div class="ctrl">×</div>
-        </div>
-      </div>
-      <div class="win-content">
-        <p>i built this website to play with tech i'd likely not touch in a professional setting, i wanted to have a place to mess around with wacky solutions and try out ideas, as well as just chat rubbish and make pretty javascript visualisers</p>
-      </div>
-
-<section class="win95">
-  <div class="titlebar">
-    <div class="caption">LINKS.TXT — Explorer</div>
-    <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
-  </div>
-  <div class="win-content">
-    here's a list of things I like on the internet, I think I have a lot of nostalgia from back when the internet was more than just 5 websites consolidating all the content
-    <ul class="link-list">
-      <li>
-        <a href="https://www.decisionproblem.com/paperclips/index2.html" target="_blank" rel="noopener">Universal Paperclips</a>
-        <div style="font-size:12px; color: var(--meta); line-height:1.4; margin-top:2px;">
-          A silly clicker with great writing that quickly becomes a poignant poem with GREAT writing.
-        </div>
-      </li>
-  
-      <li>
-        <a href="https://ncase.me/trust/" target="_blank" rel="noopener">The Evolution of Trust</a>
-        <div style="font-size:12px; color: var(--meta); line-height:1.4; margin-top:2px;">
-          I don't really agree with the prisoner's dilemma as a meaningful model (big deal, maybe you should write a blog post about it) - but this is great.
-        </div>
-      </li>
-  
-      <li>
-        <a href="https://ncase.me/polygons/" target="_blank" rel="noopener">Parable of the Polygons</a>
-        <div style="font-size:12px; color: var(--meta); line-height:1.4; margin-top:2px;">
-          Tiny unchecked biases run rampant. Playful and silly until it's not.
-        </div>
-      </li>
-  
-      <li>
-        <a href="https://deviating.net/lockpicking/presentations.html" target="_blank" rel="noopener">Deviant Ollam's Access Control Presentations</a>
-        <div style="font-size:12px; color: var(--meta); line-height:1.4; margin-top:2px;">
-          Deviant is a physical security specialist that completely changed the way I think about cybersecurity
-        </div>
-      </li>
-  
-      <li>
-        <a href="https://danluu.com/input-lag/" target="_blank" rel="noopener">Dan Luu on Input Lag</a>
-        <div style="font-size:12px; color: var(--meta); line-height:1.4; margin-top:2px;">
-          Dan Luu with a super low-level version of my gripes about the modern internet
-        </div>
-      </li>
-    </ul>
-  </div>
-  
-</section>
-
-<section class="win95">
-  <div class="titlebar">
-    <div class="caption">PROJECTS.INI — Notepad</div>
-    <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
-  </div>
-  <div class="win-content">
-    projects i'm working on right now - i don't really like having public commits for my sloppy personal projects (this site is painful enough) but if you want to chat to me about these, i'm always happy
-    <ul class="work-list">
-      <li>
-        <h3>twin stick shooter game</h3>
-        <p class="meta">unity, c#, aseprite · evenings</p>
-        <p>seriously fun, requires so much polymathy.</p>
-      </li>
-      <li>
-        <h3>garden office</h3>
-        <p class="meta">timber, OSB, insulation, nail gun · weekends</p>
-        <p>those aren't frameworks, i mean an actual garden office construction - blog post coming soon.</p>
-      </li>
-      <li>
-        <h3>Nab Lists — an actually fast shopping list app</h3>
-        <p class="meta">flutter, dart, firebase · android</p>
-        <p>seriously, why is every shopping list app so slow — shared lists that update instantly for me and my wife.</p>
-        <p><a href="/nab-lists/privacy/">privacy policy</a></p>
-      </li>
-      <li>
-        <h3>this site’s playground</h3>
-        <p class="meta">canvas, vanilla js</p>
-        <p>spending a bit of time trying to make javascript do pretty stuff, todo for this includes spending loads more time on cellular automata, i'm really obsessive about those after working on a cellular automata representation of slime mould a long time ago, working on some 3d boid rendering as well</p>
-      </li>
-    </ul>
-  </div>
-</section>
-
-    </section>
+  <main id="main" class="container home">
+    <div class="home-content">
+      <p>i built this website to play with tech i'd likely not touch in a professional setting, i wanted to have a place to mess around with wacky solutions and try out ideas, as well as just chat rubbish and make pretty javascript visualisers</p>
+      <section aria-labelledby="writing">
+        <h2 id="writing">blog</h2>
+        <div class="post-list" data-post-list data-limit="3"><p><a href="/blog/">read the blog</a></p></div>
+      </section>
+      <section aria-labelledby="making">
+        <h2 id="making">things i'm working on</h2>
+        <dl class="projects">
+          <dt>Nab Lists</dt>
+          <dd><p>seriously, why is every shopping list app so slow — shared lists that update instantly for me and my wife.</p><p class="meta">flutter, dart, firebase · <a href="/nab-lists/privacy/">privacy policy</a></p></dd>
+          <dt>twin stick shooter game</dt>
+          <dd><p>seriously fun, requires so much polymathy.</p><p class="meta">unity, c#, aseprite</p></dd>
+          <dt>garden office</dt>
+          <dd><p>timber, OSB, insulation, nail gun. those aren't frameworks, i mean an actual garden office construction.</p></dd>
+          <dt><a href="/playground/life/">this site's playground</a></dt>
+          <dd><p>i studied slime mould and emergent complexity for my dissertation at southampton, building a java model and then making the colonies compete. still a bit obsessed with it, so some of that is <a href="/playground/life/?model=slime">in the playground now</a>.</p></dd>
+        </dl>
+      </section>
+    </div>
+    <aside class="home-aside" aria-label="Experiments and links">
+      <figure class="life-preview">
+        <canvas id="home-life" width="480" height="480" aria-label="Conway's Game of Life. Use shuffle for a new pattern."></canvas>
+        <figcaption><a href="/playground/life/?model=life">game of life</a><div class="preview-controls"><button id="life-shuffle" type="button">shuffle</button><button id="life-pause" type="button" aria-pressed="false">pause</button></div></figcaption>
+      </figure>
+      <ul class="toy-links">
+        <li><a href="/playground/">all experiments</a></li>
+        <li><a href="/playground/life/?model=slime">slime trails</a></li>
+        <li><a href="/playground/fractal/">fractals</a></li>
+        <li><a href="/playground/dweet/">dweet unpacker</a></li>
+        <li><a href="/playground/rocketrace/">rocket race</a></li>
+      </ul>
+      <section aria-labelledby="elsewhere">
+        <h2 id="elsewhere">elsewhere</h2>
+        <p>i have a lot of nostalgia from back when the internet was more than just 5 websites consolidating all the content</p>
+        <ul class="link-list">
+          <li><a href="https://www.decisionproblem.com/paperclips/index2.html">Universal Paperclips</a><p>A silly clicker with great writing that quickly becomes a poignant poem with GREAT writing.</p></li>
+          <li><a href="https://ncase.me/trust/">The Evolution of Trust</a><p>I don't really agree with the prisoner's dilemma as a meaningful model (big deal, maybe you should write a blog post about it) - but this is great.</p></li>
+          <li><a href="https://ncase.me/polygons/">Parable of the Polygons</a><p>Tiny unchecked biases run rampant. Playful and silly until it's not.</p></li>
+          <li><a href="https://deviating.net/lockpicking/presentations.html">Deviant Ollam</a><p>A physical security specialist that completely changed the way I think about cybersecurity.</p></li>
+          <li><a href="https://danluu.com/input-lag/">Dan Luu on Input Lag</a><p>Dan Luu with a super low-level version of my gripes about the modern internet.</p></li>
+        </ul>
+      </section>
+    </aside>
   </main>
-  <script src="assets/main.js"></script>
+  <footer class="site-footer container"><a href="mailto:dan@schormans.com">dan@schormans.com</a></footer>
+  <script src="/assets/home-life.js" defer></script>
 </body>
 </html>

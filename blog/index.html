@@ -1,58 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Blog — Dan Schormans</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
+  <meta name="description" content="Occasional writing by Dan Schormans.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/assets/blog-tags.css">
+  <script src="/assets/main.js"></script>
+  <script src="/assets/posts.js?v=3" defer></script>
 </head>
 <body>
-
-  <div id="themeToggle"
-     class="theme-toggle"
-     role="button"
-     aria-label="Toggle light/dark theme"
-     aria-pressed="false"
-     title="Toggle theme">
-  <span class="icon-sun" aria-hidden="true">☼</span>
-  <span class="icon-moon" aria-hidden="true">☾</span>
-</div>
-
-  <header>
-    <div class="container">
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <a class="wordmark" href="/" aria-label="Dan Schormans, home">Dan Schormans</a>
+    <nav aria-label="Main navigation"><a href="/blog/" aria-current="page">blog</a><a href="/playground/">playground</a><a href="/dschormansWebsiteCV.pdf">cv</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button></nav>
+  </header>
+  <main id="main" class="container">
+    <div class="page-header">
       <h1 class="title">blog</h1>
       <p class="subtitle">100% guaranteed to have been written in less than 20 minutes - or your money back!</p>
-      <div class="navbar"><a class="btn" href="../"><- home</a></div>
     </div>
-  </header>
-
-  <main class="container">
-    <section class="win95">
-      <div class="titlebar">
-        <div class="caption">POSTS — Explorer</div>
-        <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
-      </div>
-      <div class="win-content" id="post-list"></div>
-    </section>
+    <nav class="tag-filters" data-tag-filters aria-label="Filter posts by tag" hidden></nav>
+    <p class="post-filter-status" id="post-filter-status" role="status" hidden></p>
+    <div class="post-list" data-post-list>
+      <p><a href="/blog/posts/waiting-for-the-build.md">ai productivity and the rest of the job</a></p>
+      <p><a href="/blog/posts/microservices.md">microservices, macrotrends</a></p>
+      <p><a href="/blog/posts/no-libraries.md">look mum no libraries</a></p>
+      <p><a href="/blog/posts/chair.md">build a chair</a></p>
+    </div>
   </main>
-
-  <script src="../assets/main.js"></script>
-  <script>
-    async function boot() {
-      const res = await fetch('posts.json');
-      const posts = await res.json();
-      const list = document.getElementById('post-list');
-      posts.sort((a,b)=> new Date(b.date) - new Date(a.date));
-      for (const p of posts) {
-        const wrapper = document.createElement('section');
-        wrapper.className = 'win95 post-card';
-        wrapper.innerHTML = '<div class="titlebar"><div class="caption">POST</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>' +
-                            '<div class="win-content"><h3><a href="post.html?slug=' + p.slug + '">' + p.title + '</a></h3>' +
-                            '<div class="meta">' + new Date(p.date).toDateString() + ' · ' + p.excerpt + '</div></div>';
-        list.appendChild(wrapper);
-      }
-    }
-    boot();
-  </script>
+  <footer class="site-footer container"><a href="/">← home</a><a href="mailto:dan@schormans.com">e-mail</a></footer>
 </body>
 </html>

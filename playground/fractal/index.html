@@ -1,58 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Playground — Fractal</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fractals — Dan Schormans</title>
+  <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/playground/lab.css">
+  <script src="/assets/main.js"></script>
+  <script src="fractal-core.js" defer></script><script src="fractal-places.js" defer></script><script src="fractal.js" defer></script>
 </head>
 <body>
-    <div id="themeToggle"
-    class="theme-toggle"
-    role="button"
-    aria-label="Toggle light/dark theme"
-    aria-pressed="false"
-    title="Toggle theme">
-  <span class="icon-sun" aria-hidden="true">☼</span>
-  <span class="icon-moon" aria-hidden="true">☾</span>
-  </div>
-  <header class="container">
-    <h1 class="title">playground</h1>
-    <p class="subtitle">tiny toys & experiments</p>
-    <nav class="navbar" style="margin-bottom:8px">
-        <a class="btn" href="../../"><- home</a>
-        <a class="btn " href="/playground/dweet/">dweet unpacker</a>
-        <a class="btn" href="/playground/life/">game of life</a>
-        <a class="btn primary" href="/playground/fractal/">fractal</a>
-      </nav>
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <a class="wordmark" href="/" aria-label="Dan Schormans, home">Dan Schormans</a>
+    <nav aria-label="Main navigation"><a href="/blog/">blog</a><a href="/playground/" aria-current="page">playground</a><a href="/dschormansWebsiteCV.pdf">cv</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button></nav>
   </header>
-
-  <main class="container">
-    <section class="win95">
-      <div class="titlebar">
-        <div class="caption">MANDELBROT.EXE - Runner</div>
-        <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
-      </div>
-      <div class="win-content">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          <button id="zoomIn" class="btn primary">zoom in</button>
-          <button id="zoomOut" class="btn">zoom out</button>
-          <label style="display:inline-flex;align-items:center;gap:6px">iterations 32
-            <input id="iters" type="range" min="32" max="1024" value="256">1024
-          </label>
-          <span style="flex:1"></span>
-          <div>move:</div>
-          <div style="display:grid;grid-template-columns:repeat(3,auto);gap:4px;align-items:center">
-            <span></span> <button id="upBtn" class="btn">↑</button> <span></span>
-            <button id="leftBtn" class="btn">←</button> <button id="downBtn" class="btn">↓</button> <button id="rightBtn" class="btn">→</button>
-          </div>
-        </div>
-        <canvas id="mb" style="width:100%;aspect-ratio:16/9;display:block;background:#fff"></canvas>
-      </div>
-    </section>
+  <main id="main" class="container lab">
+    <nav class="lab-nav" aria-label="Playground"><a href="/playground/">all experiments</a><a href="/playground/life/">cellular automata</a><a href="/playground/fractal/">fractals</a><a href="/playground/dweet/">dweets</a><a href="/playground/rocketrace/">rocket race</a></nav>
+    <h1 class="title">fractals</h1>
+    <p class="playground-intro">i like that these are all slightly unreasonable consequences of doing the same tiny calculation over and over. pick somewhere to get lost, or hit somewhere else and let this thing choose a detour.</p>
+    <div class="lab-controls">
+      <label>set <select id="kind"><option value="0">Mandelbrot</option><option value="1">Julia</option><option value="2">burning ship</option><option value="3">tricorn</option><option value="4">cubic multibrot</option><option value="5">newton basins</option></select></label>
+      <label>somewhere interesting <select id="place"><option value="custom">current view</option><option value="overview">overview</option><option value="seahorse" selected>seahorse valley</option><option value="spiral">spiral</option><option value="julia">Julia dendrites</option><option value="ship">burning ship</option><option value="ship-detail">the shipyard</option><option value="rabbit">douady rabbit</option><option value="basilica">basilica</option><option value="dust">julia dust</option><option value="tricorn">three arms</option><option value="cubic">cube it</option><option value="newton">three answers</option></select></label>
+      <label>iterations <input id="iters" type="range" min="64" max="2048" step="64" value="512"><output id="iterValue" for="iters">512</output></label>
+      <label>colour <select id="palette"><option value="0">tidal</option><option value="1">ember</option><option value="2">ink</option></select></label>
+    </div>
+    <div class="lab-controls" id="juliaControls" hidden>
+      <label>Julia real <input id="juliaX" type="number" min="-2" max="2" step="any" value="-.8"></label>
+      <label>imaginary <input id="juliaY" type="number" min="-2" max="2" step="any" value=".156"></label>
+    </div>
+    <div class="lab-controls">
+      <button id="detour" class="btn" type="button">somewhere else</button><button id="juliaHere" class="btn" type="button">julia from here</button><button id="backToMap" class="btn" type="button" hidden>back to mandelbrot</button><button id="zoomIn" class="btn" type="button">zoom in</button><button id="zoomOut" class="btn" type="button">zoom out</button><button id="reset" class="btn" type="button">reset view</button><button id="share" class="btn" type="button">copy view link</button>
+    </div>
+    <p id="fractalStory" class="playground-intro fractal-story" aria-live="polite">seahorse valley. keep following the curled edges. this is usually where i stop pretending i'm only going to look for five minutes.</p>
+    <div class="fractal-stage" id="fractalStage" tabindex="0" role="img" aria-label="Interactive fractal. Drag to pan, wheel or pinch to zoom. Arrow keys pan; plus and minus zoom.">
+      <canvas id="mb" aria-hidden="true"></canvas><canvas id="cpu" aria-hidden="true" hidden></canvas>
+    </div>
+    <div class="lab-status"><output id="stats" aria-live="off" aria-label="Renderer statistics">starting…</output><span id="fractalMessage" role="status"></span></div>
+    <p class="lab-help">wheel or pinch to zoom, double-click to dive in. arrow keys pan; + / − zoom; 0 resets. shift-click a mandelbrot point to visit its julia set. view links keep the coordinates and settings.</p>
+    <details class="lab-notes"><summary>a few details</summary>
+      <p>mandelbrot starts z at zero and varies c in z² + c. julia fixes c and varies the starting z. burning ship takes absolute values before squaring. tricorn uses the complex conjugate of z before squaring. cubic multibrot uses z³ + c.</p>
+      <p>newton basins use z ← z − (z³ − 1) / (3z²). instead of watching points escape, we're watching them find one of three roots. the boundaries are where the disagreements live.</p>
+      <p>dark means a point hasn't escaped, or hasn't converged for newton, within the iteration limit. it isn't a proof of anything. turn the iterations up if a fine edge looks unfinished.</p>
+      <p>ordinary views run on the gpu. deep zooms use a double-precision worker, which also takes over if webgl isn't available. dragging gets a quick preview, then a more detailed pass when you stop. the zoom limit is a width of 10⁻¹¹; beyond that ordinary floating-point numbers aren't much use here.</p>
+      <p><a href="https://people.math.harvard.edu/~knill/teaching/math22b2022/handouts/lecture18.pdf">a little more on newton basins</a> · <a href="https://arxiv.org/abs/1209.1753">why the tricorn gets strange</a></p>
+    </details>
+    <noscript><p>This experiment needs JavaScript.</p></noscript>
   </main>
-
-  <script src="../../assets/main.js"></script>
-  <script src="fractal.js"></script>
+  <footer class="site-footer container"><a href="/">← home</a><a href="/blog/">blog</a></footer>
 </body>
 </html>

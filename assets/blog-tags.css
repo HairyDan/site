@@ -1,0 +1,8 @@
+.tag-filters { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; font-size: 13px; }
+.tag-filters a[aria-current="page"] { color: var(--text); font-weight: bold; text-decoration-thickness: 2px; }
+.post-filter-status { margin: 0 0 12px; color: var(--meta); font-size: 12px; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 11px; line-height: 1.7; }
+.post-tags a, .post-tags a:visited { color: var(--meta); }
+.post-tags a:hover { color: var(--accent); }
+.post-row h3 { text-decoration: none; }
+.tag-filters[hidden], .post-tags[hidden], .post-filter-status[hidden] { display: none; }

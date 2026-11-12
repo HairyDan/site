@@ -1,58 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title id="title">Post — Dan Schormans</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post — Dan Schormans</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/assets/blog-tags.css">
+  <script src="/assets/main.js"></script>
+  <script src="/assets/micro-markdown.js" defer></script>
+  <script src="/assets/post.js?v=3" defer></script>
 </head>
 <body>
-
-  <div id="themeToggle"
-  class="theme-toggle"
-  role="button"
-  aria-label="Toggle light/dark theme"
-  aria-pressed="false"
-  title="Toggle theme">
-<span class="icon-sun" aria-hidden="true">☼</span>
-<span class="icon-moon" aria-hidden="true">☾</span>
-</div>
-
-  <header>
-    <div class="container">
-      <h1 class="title" id="post-title">Loading…</h1>
-      <p class="subtitle" id="post-subtitle"></p>
-      <div class="navbar"><a class="btn" href="./"><- all posts</a><a class="btn" href="../">home</a></div>
-    </div>
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <a class="wordmark" href="/" aria-label="Dan Schormans, home">Dan Schormans</a>
+    <nav aria-label="Main navigation"><a href="/blog/" aria-current="page">blog</a><a href="/playground/">playground</a><a href="/dschormansWebsiteCV.pdf">cv</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button></nav>
   </header>
-
-  <main class="container">
-    <section class="win95">
-      <div class="titlebar"><div class="caption">READING — WordPad</div><div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div></div>
-      <div class="win-content" id="content">Loading…</div>
-    </section>
+  <main id="main" class="container reading">
+    <div class="page-header">
+      <p class="eyebrow"><a href="/blog/">← all posts</a></p>
+      <h1 class="title" id="post-title">loading…</h1>
+      <p class="meta" id="post-subtitle"></p>
+      <nav class="post-tags" id="post-tags" aria-label="Post tags" hidden></nav>
+    </div>
+    <article class="prose" id="content" aria-label="Article"><p role="status">loading…</p></article>
+    <noscript><p>JavaScript is needed to display this article. <a href="/blog/">Read the original markdown instead.</a></p></noscript>
   </main>
-
-  <script src="../assets/main.js"></script>
-  <script src="../assets/micro-markdown.js"></script>
-  <script>
-    (async function () {
-      const params = new URLSearchParams(location.search);
-      const slug = params.get('slug');
-      if (!slug) { document.getElementById('content').textContent = 'Missing ?slug'; return; }
-
-      const metaList = await fetch('posts.json').then(r=>r.json()).catch(()=>[]);
-      const meta = metaList.find(p => p.slug === slug) || null;
-      if (meta) {
-        document.getElementById('title').textContent = meta.title + ' — Dan Schormans';
-        document.getElementById('post-title').textContent = meta.title;
-        document.getElementById('post-subtitle').textContent = (new Date(meta.date).toLocaleDateString()) + (meta.excerpt ? (' · ' + meta.excerpt) : '');
-      }
-
-      const md = await fetch('posts/' + slug + '.md').then(r=>r.text());
-      const html = window.microMarkdown(md);
-      document.getElementById('content').innerHTML = html;
-    })();
-  </script>
+  <footer class="site-footer container"><a href="/blog/">← all posts</a><a href="/">home</a></footer>
 </body>
 </html>

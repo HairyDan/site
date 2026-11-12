@@ -1,63 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Playground — Game of Life</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cellular automata — Dan Schormans</title>
+  <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/playground/lab.css">
+  <script src="/assets/main.js"></script>
+  <script src="engine.js" defer></script><script src="patterns.js" defer></script><script src="life.js" defer></script>
 </head>
 <body>
-
-    <div id="themeToggle"
-    class="theme-toggle"
-    role="button"
-    aria-label="Toggle light/dark theme"
-    aria-pressed="false"
-    title="Toggle theme">
-  <span class="icon-sun" aria-hidden="true">☼</span>
-  <span class="icon-moon" aria-hidden="true">☾</span>
-  </div>
-    
-  <header class="container">
-    <h1 class="title">playground</h1>
-    <p class="subtitle">tiny toys & experiments</p>
-    <nav class="navbar" style="margin-bottom:8px">
-        <a class="btn" href="../../"><- home</a>
-        <a class="btn " href="/playground/dweet/">dweet unpacker</a>
-        <a class="btn primary" href="/playground/life/">game of life</a>
-        <a class="btn" href="/playground/fractal/">fractal</a>
-      </nav>
+  <a class="skip-link" href="#main">skip to content</a>
+  <header class="site-header container">
+    <a class="wordmark" href="/" aria-label="Dan Schormans, home">Dan Schormans</a>
+    <nav aria-label="Main navigation"><a href="/blog/">blog</a><a href="/playground/" aria-current="page">playground</a><a href="/dschormansWebsiteCV.pdf">cv</a><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">◐</button></nav>
   </header>
-
-  <main class="container">
-    <section class="win95">
-      <div class="titlebar">
-        <div class="caption">LIFE.EXE - Runner</div>
-        <div class="controls"><div class="ctrl">_</div><div class="ctrl">▢</div><div class="ctrl">×</div></div>
+  <main id="main" class="container lab">
+    <nav class="lab-nav" aria-label="Playground"><a href="/playground/">all experiments</a><a href="/playground/life/">cellular automata</a><a href="/playground/fractal/">fractals</a><a href="/playground/dweet/">dweets</a><a href="/playground/rocketrace/">rocket race</a></nav>
+    <h1 class="title">cellular automata</h1>
+    <p class="playground-intro">i'm a bit obsessed with cellular automata, give a grid of cells a few simple rules and you can lose hours watching what happens. my 2017 dissertation at southampton was on modelling slime mould in java, looking at how local interactions turn into networks and what happens when you make two colonies compete. this is mostly an excuse to keep messing around with that stuff.</p>
+    <div class="playground-intro" aria-live="polite">
+      <p data-for="slime">this is the one from my dissertation. lots of tiny cells sensing food and following trails, with no idea what the whole colony is doing. somehow you get a network out of that. still quite happy to sit and watch it.</p>
+      <p data-for="life" hidden>the one i always come back to. a cell only gets to know about its eight neighbours, and that's enough for gliders, clocks and things that build more things. try acorn. seven cells, then a surprisingly long wait.</p>
+      <p data-for="brain" hidden>life with a short memory, sort of. a cell fires, has a little rest, then can fire again. that one extra state gives you these lovely little machines that seem to run across the grid. draw something in their way.</p>
+      <p data-for="cyclic" hidden>every colour eats the next one, all the way round. nobody gets to win. it starts as noise and ends up full of spirals, which feels like quite a lot of organisation for such a petty little rule.</p>
+      <p data-for="excitable" hidden>a cell gets excited by its neighbours, then needs time to recover. think waves rather than little creatures. cut a travelling wave in half and watch the loose ends. this is the sort of local interaction that got me into all this.</p>
+      <p data-for="reaction" hidden>two imaginary chemicals spreading out and reacting. change the rates a tiny bit and spots turn into worms, or something that looks vaguely alive. same interest as the slime work: where does the apparent organisation come from?</p>
+    </div>
+    <div class="lab-controls">
+      <label>model <select id="model">
+        <option value="slime" selected>slime mould · 2017 dissertation</option><option value="life">life-like</option><option value="brain">Brian’s Brain</option><option value="cyclic">cyclic automaton</option><option value="excitable">excitable medium</option><option value="reaction">reaction–diffusion</option>
+      </select></label>
+      <label>grid <select id="resolution"><option value="128">128 × 80</option><option value="256" selected>256 × 160</option><option value="512">512 × 320</option></select></label>
+      <label>seed <input id="seed" required type="number" min="1" max="4294967295" value="42"></label>
+      <button id="randomBtn" class="btn" type="button">seed / reset</button>
+    </div>
+    <div class="lab-controls model-controls" data-for="life" hidden>
+      <label>rule <select id="rulePreset"><option value="B3/S23">Conway · B3/S23</option><option value="B36/S23">HighLife · B36/S23</option><option value="B2/S">Seeds · B2/S</option><option value="B3678/S34678">Day & Night · B3678/S34678</option><option value="B3/S012345678">Life without death</option><option value="custom">custom</option></select></label>
+      <label>birth / survival <input id="rule" value="B3/S23" spellcheck="false" maxlength="23"></label>
+      <button id="applyRule" class="btn" type="button">apply</button>
+      <label><input id="wrap" type="checkbox" checked> wrap edges</label>
+      <label><input id="trails" type="checkbox"> trails</label>
+    </div>
+    <div class="lab-controls model-controls" data-for="cyclic excitable" hidden>
+      <label>states <input id="states" type="number" min="3" max="32" value="12"></label>
+      <label>neighbours needed <input id="threshold" type="number" min="1" max="8" value="1"></label>
+      <button id="applyStates" class="btn" type="button">apply / reset</button>
+    </div>
+    <div class="lab-controls model-controls" data-for="reaction" hidden>
+      <label>recipe <select id="recipe"><option value=".0367,.0649">mitosis</option><option value=".029,.057">coral</option><option value=".025,.06">worms</option><option value=".014,.054">moving spots</option></select></label>
+      <label>feed <input id="feed" type="number" min="0" max=".1" step=".0001" value=".0367"></label>
+      <label>kill <input id="kill" type="number" min="0" max=".1" step=".0001" value=".0649"></label>
+    </div>
+    <div class="lab-controls model-controls" data-for="slime">
+      <label>experiment <select id="slimeVariant"><option value="local" selected>2017 model · local food</option><option value="long-range">long-range food sensing</option><option value="competition">competing colonies</option><option value="sketch">earlier trail sketch</option></select></label>
+      <label>show <select id="slimeView"><option value="trails">trails</option><option value="agents">cells</option><option value="food">food sensing</option></select></label>
+      <label>agents <select id="agents"><option>2000</option><option selected>6000</option><option>12000</option></select></label>
+      <label>sensor distance <input id="sensor" type="range" min="2" max="24" value="8"><output for="sensor" id="sensorValue">8</output></label>
+      <label>sensor angle <input id="angle" type="range" min="10" max="100" value="45"><output for="angle" id="angleValue">45°</output></label>
+      <label>trail retention <input id="decay" type="range" min="85" max="99" value="95"><output for="decay" id="decayValue">95%</output></label>
+    </div>
+    <p class="lab-help" data-variant="local">the baseline from 2017. try putting food in a few places, then a wall between them. the cells only sense what's nearby; the paths are the colony figuring it out collectively.</p>
+    <p class="lab-help" data-variant="long-range" hidden>what if the food is easier to find? this was one of the changes i investigated. switch to food sensing to see the wider signal, then compare the trails with the local model.</p>
+    <p class="lab-help" data-variant="competition" hidden>two colonies, shared food, and a reason to avoid each other. another experiment from the dissertation. there isn't a little manager dividing up the board. the warm and cool trails just get there through local decisions.</p>
+    <p class="lab-help" data-variant="sketch" hidden>an earlier, looser sketch. these agents can overlap and wrap around the edges, unlike the dissertation model. useful for seeing how much those seemingly small choices change the result.</p>
+    <div class="lab-toolbar">
+      <button id="playBtn" class="btn primary" type="button">play</button>
+      <button id="stepBtn" class="btn" type="button">step</button>
+      <button id="clearBtn" class="btn" type="button">clear</button>
+      <label>speed <input id="speed" type="range" min="1" max="60" value="30"><output for="speed" id="speedValue">30/s</output></label>
+      <label>tool <select id="tool"><option value="draw">draw</option><option value="erase">erase</option><option value="pan">pan</option><option value="stamp">stamp pattern</option><option value="food" hidden>food</option><option value="wall" hidden>wall</option></select></label>
+      <label>brush <input id="brush" type="range" min="1" max="8" value="1"></label>
+      <button id="fit" class="btn" type="button">fit</button>
+      <label><input id="showGrid" type="checkbox"> grid</label>
+    </div>
+    <div class="simulation-stage"><canvas id="life" tabindex="0" aria-label="Cellular automata grid. Drag to draw; shift-drag to erase. Arrow keys pan, plus and minus zoom."></canvas></div>
+    <div class="lab-status"><output id="stats" aria-live="off" aria-label="Simulation statistics">starting…</output><span id="message" role="status"></span></div>
+    <p class="lab-help">drag to draw; shift or right-drag to erase. wheel to zoom. middle-drag or the pan tool to move. space pauses when the canvas is focused.</p>
+    <div class="lab-controls" data-for="life" hidden>
+      <label>pattern <select id="pattern"><option>glider</option><option>blinker</option><option>r-pentomino</option><option>acorn</option><option>diehard</option><option>gosper gun</option><option>replicator</option></select></label>
+      <button id="loadPattern" class="btn" type="button">load in empty grid</button>
+      <button id="stampPattern" class="btn" type="button">stamp with mouse</button>
+    </div>
+    <div class="lab-controls">
+      <button id="save" class="btn" type="button">save snapshot</button><button id="restore" class="btn" type="button">restore snapshot</button>
+      <label class="file-input" data-for="life">import .rle <input id="import" type="file" accept=".rle,text/plain"></label>
+      <button id="export" class="btn" type="button" data-for="life">export .rle</button>
+      <button id="share" class="btn" type="button">copy setup link</button>
+    </div>
+    <details class="lab-notes">
+      <summary>what am i looking at?</summary>
+      <div data-note="life" hidden><p>b is how many neighbours a dead cell needs to be born; s is how many a live one needs to stick around. all eight surrounding cells count, and everyone updates together. change one number and a familiar little creature can stop working entirely.</p><p>try the r-pentomino or acorn one step at a time. the replicator needs highlife; the gun and glider want conway's rule. wrap joins opposite edges. turn it off to give the board an actual edge.</p><p><a href="https://conwaylife.com/wiki/Rulestring">Rule notation</a> · <a href="https://conwaylife.com/wiki/Run_Length_Encoded">RLE format</a></p></div>
+      <div data-note="brain" hidden><p>three states: ready, firing, recovering. exactly two firing neighbours wake a ready cell up. it fires for one tick, recovers for one, then is ready again. that's the whole rule. the moving things are what happens when you repeat it.</p><p><a href="https://fourmilab.ch/cellab/classic/manual/chap4.html">Brian’s Brain in the Cellab manual</a></p></div>
+      <div data-note="cyclic" hidden><p>each state is chased by the next, with the last chased by the first. a cell changes when enough of its eight neighbours are in the next state. try changing the threshold from one to two, or give it fewer colours. the edges wrap.</p><p><a href="https://arxiv.org/abs/patt-sol/9303002">Excitable and cyclic automata — Fisch, Gravner & Griffeath</a></p></div>
+      <div data-note="excitable" hidden><p>a resting cell fires when enough neighbours are firing, then works through a fixed recovery cycle. this is a greenberg–hastings variant using all eight neighbours. the colours show how far through recovery each cell is. the edges wrap.</p><p>erase a gap in a travelling wave and see whether its ends curl. more states means a longer recovery.</p><p><a href="https://epubs.siam.org/doi/10.1137/0134040">Greenberg & Hastings, 1978</a></p></div>
+      <div data-note="reaction" hidden><p>these cells hold concentrations rather than being on or off. u gets replenished; v consumes u and decays. both diffuse. drawing adds v, erasing restores u. the recipe menu is a good place to start before fiddling with feed and kill. up to eight integration steps run per tick; the edges wrap.</p><p>Du = 1, Dv = 0.5, dt = 1. The nine-point Laplacian uses 0.2 for cardinal neighbours and 0.05 for diagonals.</p><p><a href="https://www.karlsims.com/rd.html">Karl Sims’ reaction–diffusion tutorial</a> · <a href="https://groups.csail.mit.edu/mac/projects/amorphous/GrayScott/">Gray–Scott at MIT</a></p></div>
+      <div data-note="slime">
+        <p>i built the original model in java for my computer science dissertation at southampton in 2017. this rebuild follows the sensor geometry, separate food field, collision checks and gaussian diffusion described in the report.</p>
+        <ul><li>local food: short-range food cues, as in the baseline model.</li><li>long-range sensing: a wider food field. try the food sensing view to see what the cells can pick up.</li><li>competition: two colonies follow their own trails and avoid the other colony's trails. food is shared. warm and cool colours distinguish the colonies.</li></ul>
+        <p>cells use eight compass directions and three 3×3 sensor patches. with no signal they turn randomly. occupied cells block movement. the sensor distance of 8 and angle of 45° come from the report's final parameter selection. diffusion uses the 3×3 gaussian kernel shown there: centre 1/4, cardinal neighbours 1/8, diagonals 1/16, followed by trail decay.</p>
+        <p>the board has closed edges; diffusion reflects at the outer boundary. food doesn't run out, and the long-range food field is a gaussian approximation. walls remove any cells painted over and block movement, but food sensing can extend through them. cell count is capped at the number of grid spaces.</p>
+        <p>the pdf includes a sensor-code excerpt, not the full java project. this is an adaptation, not a line-for-line port or a reproduction of the results. the earlier trail sketch is still here for comparison: that one uses continuous headings, wrapping edges and no collision exclusion.</p>
+        <p>source: <cite>modelling the emergent behaviours of slime mould and investigating modifications of the model</cite>, 2017, pp. 9–18 and 24–27. the original work builds on <a href="https://arxiv.org/abs/1503.06579">jeff jones' particle models</a>.</p>
       </div>
-      <div class="win-content">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          <button id="playBtn" class="btn primary">play</button>
-          <button id="stepBtn" class="btn">step</button>
-          <button id="clearBtn" class="btn">clear</button>
-          <button id="randomBtn" class="btn">random</button>
-          <label style="display:inline-flex;align-items:center;gap:6px">speed
-            <input id="speed" type="range" min="1" max="60" value="24">
-          </label>
-          <span style="flex:1"></span>
-          <div>move:</div>
-          <div style="display:grid;grid-template-columns:repeat(3,auto);gap:4px;align-items:center">
-            <span></span> <button id="upBtn" class="btn">↑</button> <span></span>
-            <button id="leftBtn" class="btn">←</button> <button id="downBtn" class="btn">↓</button> <button id="rightBtn" class="btn">→</button>
-          </div>
-        </div>
-        <canvas id="life" style="width:100%;aspect-ratio:16/9;display:block;background:#fff"></canvas>
-        <p class="meta" style="margin-top:8px">draw cells with mouse, or just use a random seed :)</p>
-      </div>
-    </section>
+    </details>
+    <noscript><p>This experiment needs JavaScript.</p></noscript>
   </main>
-
-  <script src="../../assets/main.js"></script>
-  <script src="life.js"></script>
+  <footer class="site-footer container"><a href="/">← home</a><a href="/blog/">blog</a></footer>
 </body>
 </html>

@@ -1,20 +1,41 @@
 [
   {
+    "title": "ai productivity and the rest of the job",
+    "date": "2026-11-11",
+    "slug": "waiting-for-the-build",
+    "excerpt": "deploy times, agent orchestrators, and trying to keep it all in my head.",
+    "tags": [
+      "ai",
+      "software engineering"
+    ]
+  },
+  {
     "title": "microservices, macrotrends",
     "date": "2025-10-01",
     "slug": "microservices",
-    "excerpt": "were we wrong back then?, are we wrong now?, why are we so obsessive?"
+    "excerpt": "were we wrong back then?, are we wrong now?, why are we so obsessive?",
+    "tags": [
+      "architecture",
+      "software engineering"
+    ]
   },
   {
     "title": "look mum no libraries",
     "date": "2025-09-02",
     "slug": "no-libraries",
-    "excerpt": "not always necessary"
+    "excerpt": "not always necessary",
+    "tags": [
+      "web",
+      "software engineering"
+    ]
   },
   {
     "title": "build a chair",
     "date": "2024-05-08",
     "slug": "chair",
-    "excerpt": "just build a chair."
+    "excerpt": "just build a chair.",
+    "tags": [
+      "making"
+    ]
   }
 ]
